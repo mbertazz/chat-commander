@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="ui_001">Chat Commander — Collegamento</title>
+<link rel="stylesheet" href="options.css">
+<main>
+  <h1><img src="icons/icon-64.png" width="48" height="48" alt=""> Chat Commander</h1>
+  <p><span data-i18n="setup_001">Collega Chat Commander, un passaggio alla volta. Dopo il riavvio riparti dallo sblocco della chiave.</span></p>
+  <p id="ready" class="notice" role="status" aria-live="polite"></p>
+  <details id="key-step" class="setup-step" open>
+    <summary><span class="number" aria-hidden="true">1</span> <span data-i18n="setup_002">Prepara la chiave di collegamento</span> <span id="step-key" class="step-state"></span></summary>
+    <div class="step-body">
+    <p><span data-i18n="setup_003">Questa chiave permette all’estensione di ricevere le richieste dalla tua app ChatGPT. Servono un tunnel OpenAI privato già creato e la sua chiave runtime dedicata. Installare l’estensione non li crea.</span></p>
+    <p><a href="https://developers.openai.com/api/docs/guides/secure-mcp-tunnels" target="_blank" rel="noopener"><span data-i18n="setup_005">Crea il tunnel e la chiave seguendo la guida OpenAI</span></a></p>
+  <form id="unlock" hidden>
+<p><span data-i18n="setup_004">Hai già salvato la chiave? Sbloccala qui con la password locale. Questa password non è quella di ChatGPT e non viene inviata a OpenAI.</span></p>
+    <label for="unlock-password"><span data-i18n="ui_008">Password locale</span></label>
+    <input id="unlock-password" type="password" required minlength="12" maxlength="256" autocomplete="current-password">
+    <button type="submit"><span data-i18n="setup_007">Sblocca la chiave</span></button>
+    <p id="unlock-status" role="status" aria-live="polite"></p>
+  </form>
+  <details id="settings" open>
+    <summary><span data-i18n="ui_010">Configura o sostituisci la chiave</span></summary>
+    <form id="connection">
+      <p><span data-i18n="ui_011">Servono il tunnel OpenAI e l’app Chat Commander già configurati nel tuo ChatGPT. Usa una chiave dedicata; non una chiave Admin.</span></p>
+      <label for="tunnel"><span data-i18n="ui_012">Tunnel ID</span></label>
+      <input id="tunnel" required autocomplete="off" spellcheck="false" placeholder="tunnel_…">
+      <label for="key"><span data-i18n="ui_013">Chiave API runtime</span></label>
+      <input id="key" type="password" required autocomplete="off" spellcheck="false">
+      <label class="check"><input id="remember" type="checkbox" checked> <span data-i18n="ui_014">Ricorda la chiave cifrata su questo dispositivo</span></label>
+      <div id="vault-fields">
+        <label for="vault-password"><span data-i18n="ui_015">Scegli una password locale (almeno 12 caratteri)</span></label>
+        <input id="vault-password" type="password" minlength="12" maxlength="256" autocomplete="new-password" required>
+        <label for="vault-confirm"><span data-i18n="ui_016">Ripeti la password locale</span></label>
+        <input id="vault-confirm" type="password" minlength="12" maxlength="256" autocomplete="new-password" required>
+        <p><span data-i18n="ui_017">La password sblocca la chiave dopo un riavvio e non viene salvata dall’estensione. Se la dimentichi, reinserisci la chiave API. La cifratura protegge il file salvato, non un browser o computer compromesso.</span></p>
+      </div>
+      <button type="submit"><span data-i18n="setup_006">Salva la chiave e continua</span></button>
+    </form>
+  </details>
+    <p id="save-status" class="feedback" role="status" aria-live="polite"></p>
+    <p id="key-feedback" class="feedback" role="status" aria-live="polite"></p>
+    <p id="saved-key" class="hint"></p>
+    <details><summary><span data-i18n="setup_030">Controllo chiave e tunnel</span></summary>
+      <p id="status" role="status" aria-live="polite"></p>
+      <button id="diagnose" type="button"><span data-i18n="ui_032">Verifica connessione</span></button>
+      <pre id="diagnostic" role="status" aria-live="polite"></pre>
+    </details>
+    </div>
+  </details>
+  <details id="source-step" class="setup-step">
+    <summary><span class="number" aria-hidden="true">2</span> <span data-i18n="setup_009">Collega la tua scheda ChatGPT</span> <span id="step-source" class="step-state"></span></summary>
+    <div class="step-body">
+    <p id="source-prerequisite" class="hint"><span data-i18n="setup_012">Prima completa il passaggio 1. Poi potrai scegliere e collegare una scheda.</span></p>
+    <p><span data-i18n="setup_010">Apri ChatGPT, accedi al tuo account personale e attendi che la pagina sia caricata. Torna qui e scegli la scheda da collegare: servirà all’estensione per leggere le chat e verificare le modifiche richieste.</span></p>
+    <button id="open-chatgpt" type="button"><span data-i18n="ui_024">Apri ChatGPT</span></button>
+    <p><span data-i18n="setup_011">Il browser ti chiederà il permesso per chatgpt.com. Il risultato del collegamento compare subito sotto il pulsante. La scheda collegata è protetta da spostamento e cancellazione.</span></p>
+    <label for="source-tab" id="source-tab-label" hidden><span data-i18n="ui_022">Scegli la scheda ChatGPT da collegare</span></label>
+    <select id="source-tab" hidden></select>
+    <button id="connect-source" type="button"><span data-i18n="setup_017">Connetti la scheda selezionata</span></button>
+    <p id="source-message" class="feedback" role="status" aria-live="polite"></p>
+    <p id="live-status" class="feedback" role="status" aria-live="polite"></p>
+    <label class="check"><input id="automatic" type="checkbox" checked> <span data-i18n="ui_020">Ripristina automaticamente il collegamento allo stesso account</span></label>
+    <p class="hint"><span data-i18n="setup_024">Dopo il riavvio: sblocca la chiave, apri una scheda ChatGPT autenticata e attendi la riconnessione allo stesso account. Se non parte, torna al passaggio 2.</span></p>
+    </div>
+  </details>
+  <details id="app-step" class="setup-step">
+    <summary><span class="number" aria-hidden="true">3</span> <span data-i18n="setup_018">Usa Chat Commander in ChatGPT</span> <span id="step-tools" class="step-state"></span></summary>
+    <div class="step-body">
+    <p id="app-prerequisite" class="hint"><span data-i18n="setup_019">Prima completa i passaggi 1 e 2. Il collegamento all’app si verifica dentro ChatGPT, non salvando di nuovo la chiave.</span></p>
+    <div id="tools-reminder">
+      <p><span data-i18n="setup_020">Collega una volta l’app Chat Commander al tuo tunnel nelle impostazioni di ChatGPT. Dopo un aggiornamento degli strumenti usa Manage → Refresh tools. Se l’app è già collegata e aggiornata, non ricrearla.</span></p>
+      <button id="tools-refreshed" type="button"><span data-i18n="setup_022">Ho collegato l’app e aggiornato gli strumenti</span></button>
+      <p id="app-feedback" class="feedback" role="status" aria-live="polite"></p>
+    </div>
+    <p><span data-i18n="setup_021">Poi scrivi questo messaggio nella conversazione ChatGPT. L’elenco restituito e gli eventuali errori compariranno nella chat: è lì che verifichi il funzionamento completo.</span></p>
+    <pre class="prompt" tabindex="0">Use Chat Commander to list my 3 most recent chats. Do not modify anything.</pre>
+    <p id="app-status" class="feedback" role="status" aria-live="polite"></p>
+    </div>
+  </details>
+  <details id="manage">
+    <summary><span data-i18n="setup_025">Gestisci il collegamento</span></summary>
+    <p><span data-i18n="setup_026">Bloccare ferma il tunnel e richiede di nuovo la password. Dimenticare rimuove anche la chiave cifrata salvata: per ripartire dovrai reinserire la chiave runtime.</span></p>
+    <button id="lock" type="button"><span data-i18n="ui_028">Blocca il collegamento</span></button>
+    <button id="disconnect" type="button"><span data-i18n="ui_029">Disconnetti e dimentica la chiave</span></button>
+    <p id="manage-status" class="feedback" role="status" aria-live="polite"></p>
+  </details>
+  <footer><a href="privacy.html" target="_blank" rel="noopener"><span data-i18n="ui_083">Informativa sulla privacy</span></a><p id="version"></p></footer>
+</main>
+<script src="options.js" type="module"></script>
+</html>

@@ -1,0 +1,350 @@
+{
+  "ui_001": {
+    "message": "Chat Commander — Connection"
+  },
+  "ui_002": {
+    "message": "Connect your personal ChatGPT once. Then manage conversations by talking to ChatGPT."
+  },
+  "ui_003": {
+    "message": "Checking connection…"
+  },
+  "ui_004": {
+    "message": "Connection key"
+  },
+  "ui_005": {
+    "message": "ChatGPT account"
+  },
+  "ui_006": {
+    "message": "Chat Commander app in ChatGPT"
+  },
+  "ui_007": {
+    "message": "Unlock the saved connection"
+  },
+  "ui_008": {
+    "message": "Local password"
+  },
+  "ui_009": {
+    "message": "Unlock and reconnect"
+  },
+  "ui_010": {
+    "message": "Set up or replace the key"
+  },
+  "ui_011": {
+    "message": "You need an OpenAI tunnel and the Chat Commander app configured in your ChatGPT. Use a dedicated runtime key, not an Admin key."
+  },
+  "ui_012": {
+    "message": "Tunnel ID"
+  },
+  "ui_013": {
+    "message": "Runtime API key"
+  },
+  "ui_014": {
+    "message": "Remember the encrypted key on this device"
+  },
+  "ui_015": {
+    "message": "Choose a local password (at least 12 characters)"
+  },
+  "ui_016": {
+    "message": "Repeat the local password"
+  },
+  "ui_017": {
+    "message": "The password unlocks the key after a restart and is not saved by the extension. If you forget it, enter the API key again. Encryption protects the saved file, not a compromised browser or computer."
+  },
+  "ui_018": {
+    "message": "Save and connect"
+  },
+  "ui_019": {
+    "message": "Personal ChatGPT"
+  },
+  "ui_020": {
+    "message": "Automatically reconnect to the same account"
+  },
+  "ui_021": {
+    "message": "The browser requests access to chatgpt.com for direct connection. No messages or cookies are saved. Multiple changes require confirmation inside ChatGPT."
+  },
+  "ui_022": {
+    "message": "Choose the ChatGPT tab to connect"
+  },
+  "ui_023": {
+    "message": "Connect ChatGPT"
+  },
+  "ui_024": {
+    "message": "Open ChatGPT"
+  },
+  "ui_025": {
+    "message": "Final step in ChatGPT"
+  },
+  "ui_026": {
+    "message": "If needed, connect the Chat Commander app to your tunnel. After a tool update, use Manage → Refresh tools in the ChatGPT app. You do not need to repeat this on every startup."
+  },
+  "ui_027": {
+    "message": "App connected and tools refreshed"
+  },
+  "ui_028": {
+    "message": "Lock connection"
+  },
+  "ui_029": {
+    "message": "Disconnect and forget key"
+  },
+  "ui_030": {
+    "message": "Diagnostics"
+  },
+  "ui_031": {
+    "message": "Polling checks access to the tunnel; invoke Chat Commander in ChatGPT to test the full connection."
+  },
+  "ui_032": {
+    "message": "Check connection"
+  },
+  "ui_033": {
+    "message": "✓ Key available"
+  },
+  "ui_034": {
+    "message": "Unlock saved key"
+  },
+  "ui_035": {
+    "message": "Set up key"
+  },
+  "ui_036": {
+    "message": "✓ ChatGPT account connected"
+  },
+  "ui_037": {
+    "message": "Check the app in ChatGPT"
+  },
+  "ui_038": {
+    "message": "✓ App and tools configured"
+  },
+  "ui_039": {
+    "message": "Key saved encrypted on this device only. Password not retained."
+  },
+  "ui_040": {
+    "message": "No key saved on disk."
+  },
+  "ui_041": {
+    "message": "Choose a tab…"
+  },
+  "ui_042": {
+    "message": "Disconnected."
+  },
+  "ui_043": {
+    "message": "Account connected. You can use the tools from your ChatGPT conversation."
+  },
+  "ui_044": {
+    "message": "This account differs from the paired account. To change it, explicitly connect the correct tab."
+  },
+  "ui_045": {
+    "message": "Cannot reconnect the paired account. Check your login or connect the desired tab."
+  },
+  "ui_046": {
+    "message": "Open a ChatGPT tab and sign in to your account."
+  },
+  "ui_047": {
+    "message": "Click Connect ChatGPT and grant the access requested by the browser."
+  },
+  "ui_048": {
+    "message": "Cannot identify the ChatGPT session. Check your login."
+  },
+  "ui_049": {
+    "message": "The tab has changed. Reconnect it."
+  },
+  "ui_050": {
+    "message": "Connection failed. Check your login and try again."
+  },
+  "ui_051": {
+    "message": "Choose your personal ChatGPT tab."
+  },
+  "ui_052": {
+    "message": "Choose a tab and click Connect ChatGPT."
+  },
+  "ui_053": {
+    "message": "Open ChatGPT, sign in and click Connect ChatGPT."
+  },
+  "ui_054": {
+    "message": "Connection completed."
+  },
+  "ui_055": {
+    "message": "Connection failed: check the tab and your login."
+  },
+  "ui_056": {
+    "message": "Passwords do not match."
+  },
+  "ui_057": {
+    "message": "Permission denied. No connection configured."
+  },
+  "ui_058": {
+    "message": "Invalid configuration or save failed. Check the fields."
+  },
+  "ui_059": {
+    "message": "Key encrypted and saved."
+  },
+  "ui_060": {
+    "message": "Connection active for this session."
+  },
+  "ui_061": {
+    "message": "Extension unavailable. Reopen this page."
+  },
+  "ui_062": {
+    "message": "Incorrect password or unreadable saved key. You can replace the configuration."
+  },
+  "ui_063": {
+    "message": "Unlock unavailable. Reopen this page."
+  },
+  "ui_064": {
+    "message": "Connection unavailable. Try again."
+  },
+  "ui_065": {
+    "message": "Preference not saved. Try again."
+  },
+  "ui_066": {
+    "message": "Operation not confirmed. Reopen settings."
+  },
+  "ui_067": {
+    "message": "Check unavailable."
+  },
+  "ui_068": {
+    "message": "OpenAI rejected the key: replace it in settings."
+  },
+  "ui_069": {
+    "message": "Tunnel access denied: check permissions and tunnel association."
+  },
+  "ui_070": {
+    "message": "Tunnel unavailable: check Tunnel ID and association."
+  },
+  "ui_071": {
+    "message": "Grant access to OpenAI to connect."
+  },
+  "ui_072": {
+    "message": "Network unavailable. Retrying automatically."
+  },
+  "ui_073": {
+    "message": "OpenAI is not responding. Retrying automatically."
+  },
+  "ui_074": {
+    "message": "Connection stopped. Check diagnostics and reconnect."
+  },
+  "ui_075": {
+    "message": "Enter the local password to reconnect."
+  },
+  "ui_076": {
+    "message": "Set up the connection to begin."
+  },
+  "ui_077": {
+    "message": "Key ready. Connect a personal ChatGPT tab."
+  },
+  "ui_078": {
+    "message": "Connecting to the tunnel…"
+  },
+  "ui_079": {
+    "message": "Tunnel and account connected. Check the app in ChatGPT to begin."
+  },
+  "ui_080": {
+    "message": "Tunnel and account connected. Try Chat Commander in ChatGPT."
+  },
+  "ui_081": {
+    "message": "Set up Chat Commander"
+  },
+  "ui_082": {
+    "message": "Manage chats from ChatGPT: search, read and review, with previews and confirmation of changes."
+  },
+  "ui_083": {
+    "message": "Privacy notice"
+  },
+  "ui_084": {
+    "message": "Version $1"
+  },
+  "ui_085": {
+    "message": "Status: $1. Responses accepted by the tunnel: $2."
+  },
+  "setup_001": {
+    "message": "Connect Chat Commander one step at a time. After restarting, begin by unlocking your saved key."
+  },
+  "setup_002": {
+    "message": "Prepare your connection key"
+  },
+  "setup_003": {
+    "message": "This key lets the extension receive requests from your ChatGPT app. You need an existing private OpenAI tunnel and its dedicated runtime key. Installing the extension does not create them."
+  },
+  "setup_004": {
+    "message": "Already saved your key? Unlock it here with your local password. This is not your ChatGPT password and is not sent to OpenAI."
+  },
+  "setup_005": {
+    "message": "Follow the OpenAI guide to create a tunnel and key"
+  },
+  "setup_006": {
+    "message": "Save key and continue"
+  },
+  "setup_007": {
+    "message": "Unlock key"
+  },
+  "setup_008": {
+    "message": "Key ready. Continue to step 2: connect your ChatGPT tab."
+  },
+  "setup_009": {
+    "message": "Connect your ChatGPT tab"
+  },
+  "setup_010": {
+    "message": "Open ChatGPT, sign in to your personal account and wait for the page to load. Return here and choose the tab to connect: the extension uses it to read chats and verify requested changes."
+  },
+  "setup_011": {
+    "message": "The browser will ask for access to chatgpt.com. The connection result appears directly below the button. The connected tab is protected from moves and deletion."
+  },
+  "setup_012": {
+    "message": "Complete step 1 first. Then you can choose and connect a tab."
+  },
+  "setup_013": {
+    "message": "No tab available. Open ChatGPT below, sign in and return to this page."
+  },
+  "setup_014": {
+    "message": "Connected tab: $1. Continue to step 3."
+  },
+  "setup_015": {
+    "message": "Permission denied. To connect the tab, click the button again and allow access to chatgpt.com."
+  },
+  "setup_016": {
+    "message": "Connecting the tab… The result will appear here."
+  },
+  "setup_017": {
+    "message": "Connect selected tab"
+  },
+  "setup_018": {
+    "message": "Use Chat Commander in ChatGPT"
+  },
+  "setup_019": {
+    "message": "Complete steps 1 and 2 first. Test the app connection inside ChatGPT, rather than saving the key again."
+  },
+  "setup_020": {
+    "message": "Connect the Chat Commander app to your tunnel once in ChatGPT settings. After a tool update, use Manage → Refresh tools. If the app is already connected and up to date, do not recreate it."
+  },
+  "setup_021": {
+    "message": "Then send this message in your ChatGPT conversation. The list and any errors will appear in the chat: that is where you verify the full connection."
+  },
+  "setup_022": {
+    "message": "I have connected the app and refreshed its tools"
+  },
+  "setup_023": {
+    "message": "App marked as configured. Now try the message in ChatGPT: this acknowledgement is not a tool test."
+  },
+  "setup_024": {
+    "message": "After restarting: unlock your key, open an authenticated ChatGPT tab and wait to reconnect to the same account. If it does not reconnect, return to step 2."
+  },
+  "setup_025": {
+    "message": "Manage connection"
+  },
+  "setup_026": {
+    "message": "Locking stops the tunnel and requires the password again. Forgetting also removes the saved encrypted key: you will need to enter the runtime key again."
+  },
+  "setup_027": {
+    "message": "Tunnel status"
+  },
+  "setup_028": {
+    "message": "Saving… The result will appear here."
+  },
+  "setup_029": {
+    "message": "Unlocking… The result will appear here."
+  },
+  "setup_030": {
+    "message": "Key and tunnel check"
+  },
+  "setup_031": {
+    "message": "Next step: $1"
+  }
+}

@@ -1,0 +1,350 @@
+{
+  "ui_001": {
+    "message": "Chat Commander — Collegamento"
+  },
+  "ui_002": {
+    "message": "Collega una volta il tuo ChatGPT personale. Poi gestisci le conversazioni parlando con ChatGPT."
+  },
+  "ui_003": {
+    "message": "Controllo del collegamento…"
+  },
+  "ui_004": {
+    "message": "Chiave di collegamento"
+  },
+  "ui_005": {
+    "message": "Account ChatGPT"
+  },
+  "ui_006": {
+    "message": "App Chat Commander in ChatGPT"
+  },
+  "ui_007": {
+    "message": "Sblocca il collegamento salvato"
+  },
+  "ui_008": {
+    "message": "Password locale"
+  },
+  "ui_009": {
+    "message": "Sblocca e ricollega"
+  },
+  "ui_010": {
+    "message": "Configura o sostituisci la chiave"
+  },
+  "ui_011": {
+    "message": "Servono il tunnel OpenAI e l’app Chat Commander già configurati nel tuo ChatGPT. Usa una chiave dedicata; non una chiave Admin."
+  },
+  "ui_012": {
+    "message": "Tunnel ID"
+  },
+  "ui_013": {
+    "message": "Chiave API runtime"
+  },
+  "ui_014": {
+    "message": "Ricorda la chiave cifrata su questo dispositivo"
+  },
+  "ui_015": {
+    "message": "Scegli una password locale (almeno 12 caratteri)"
+  },
+  "ui_016": {
+    "message": "Ripeti la password locale"
+  },
+  "ui_017": {
+    "message": "La password sblocca la chiave dopo un riavvio e non viene salvata dall’estensione. Se la dimentichi, reinserisci la chiave API. La cifratura protegge il file salvato, non un browser o computer compromesso."
+  },
+  "ui_018": {
+    "message": "Salva e collega"
+  },
+  "ui_019": {
+    "message": "ChatGPT personale"
+  },
+  "ui_020": {
+    "message": "Ripristina automaticamente il collegamento allo stesso account"
+  },
+  "ui_021": {
+    "message": "Per il collegamento diretto il browser chiede accesso a chatgpt.com. Nessun messaggio o cookie viene salvato. Le modifiche multiple richiedono conferma dentro ChatGPT."
+  },
+  "ui_022": {
+    "message": "Scegli la scheda ChatGPT da collegare"
+  },
+  "ui_023": {
+    "message": "Collega ChatGPT"
+  },
+  "ui_024": {
+    "message": "Apri ChatGPT"
+  },
+  "ui_025": {
+    "message": "Ultimo passaggio in ChatGPT"
+  },
+  "ui_026": {
+    "message": "Se non lo hai già fatto, collega l’app Chat Commander al tuo tunnel. Dopo un aggiornamento dei tool usa Manage → Refresh tools nell’app di ChatGPT. Non occorre ripeterlo a ogni avvio."
+  },
+  "ui_027": {
+    "message": "App collegata e tool aggiornati"
+  },
+  "ui_028": {
+    "message": "Blocca il collegamento"
+  },
+  "ui_029": {
+    "message": "Disconnetti e dimentica la chiave"
+  },
+  "ui_030": {
+    "message": "Diagnostica"
+  },
+  "ui_031": {
+    "message": "Il polling verifica l’accesso al tunnel; la prova completa avviene invocando Chat Commander in ChatGPT."
+  },
+  "ui_032": {
+    "message": "Verifica connessione"
+  },
+  "ui_033": {
+    "message": "✓ Chiave disponibile"
+  },
+  "ui_034": {
+    "message": "Sblocca la chiave salvata"
+  },
+  "ui_035": {
+    "message": "Configura la chiave"
+  },
+  "ui_036": {
+    "message": "✓ Account ChatGPT collegato"
+  },
+  "ui_037": {
+    "message": "Verifica l’app in ChatGPT"
+  },
+  "ui_038": {
+    "message": "✓ App e tool configurati"
+  },
+  "ui_039": {
+    "message": "Chiave salvata cifrata solo su questo dispositivo. Password non conservata."
+  },
+  "ui_040": {
+    "message": "Nessuna chiave salvata su disco."
+  },
+  "ui_041": {
+    "message": "Scegli una scheda…"
+  },
+  "ui_042": {
+    "message": "Disconnesso."
+  },
+  "ui_043": {
+    "message": "Account collegato. Puoi usare le operazioni dalla conversazione ChatGPT."
+  },
+  "ui_044": {
+    "message": "Account diverso da quello associato. Se vuoi cambiarlo, collega esplicitamente la scheda corretta."
+  },
+  "ui_045": {
+    "message": "Non riesco a ripristinare l’account associato. Controlla il login o collega la scheda desiderata."
+  },
+  "ui_046": {
+    "message": "Apri una scheda ChatGPT e accedi al tuo account."
+  },
+  "ui_047": {
+    "message": "Premi Collega ChatGPT e consenti l’accesso richiesto dal browser."
+  },
+  "ui_048": {
+    "message": "Sessione ChatGPT non identificabile. Controlla il login."
+  },
+  "ui_049": {
+    "message": "La scheda è cambiata. Ricollegala."
+  },
+  "ui_050": {
+    "message": "Collegamento non riuscito. Controlla il login e riprova."
+  },
+  "ui_051": {
+    "message": "Scegli la scheda del tuo ChatGPT personale."
+  },
+  "ui_052": {
+    "message": "Scegli la scheda da collegare e premi Collega ChatGPT."
+  },
+  "ui_053": {
+    "message": "Apri ChatGPT, accedi e premi Collega ChatGPT."
+  },
+  "ui_054": {
+    "message": "Collegamento completato."
+  },
+  "ui_055": {
+    "message": "Collegamento non riuscito: controlla la scheda e il login."
+  },
+  "ui_056": {
+    "message": "Le password non coincidono."
+  },
+  "ui_057": {
+    "message": "Permesso negato. Nessun collegamento configurato."
+  },
+  "ui_058": {
+    "message": "Configurazione non valida o salvataggio non riuscito. Controlla i campi."
+  },
+  "ui_059": {
+    "message": "Chiave cifrata e salvata."
+  },
+  "ui_060": {
+    "message": "Collegamento attivo per questa sessione."
+  },
+  "ui_061": {
+    "message": "Estensione non disponibile. Riapri questa pagina."
+  },
+  "ui_062": {
+    "message": "Password errata o chiave salvata non leggibile. Puoi sostituire la configurazione."
+  },
+  "ui_063": {
+    "message": "Sblocco non disponibile. Riapri questa pagina."
+  },
+  "ui_064": {
+    "message": "Collegamento non disponibile. Riprova."
+  },
+  "ui_065": {
+    "message": "Preferenza non salvata. Riprova."
+  },
+  "ui_066": {
+    "message": "Operazione non confermata. Riapri le impostazioni."
+  },
+  "ui_067": {
+    "message": "Verifica non disponibile."
+  },
+  "ui_068": {
+    "message": "Chiave rifiutata da OpenAI: sostituiscila nella configurazione."
+  },
+  "ui_069": {
+    "message": "Accesso al tunnel negato: controlla permessi e associazione del tunnel."
+  },
+  "ui_070": {
+    "message": "Tunnel non disponibile: controlla Tunnel ID e associazione."
+  },
+  "ui_071": {
+    "message": "Consenti l’accesso a OpenAI per collegarti."
+  },
+  "ui_072": {
+    "message": "Connessione di rete non disponibile. Riprovo automaticamente."
+  },
+  "ui_073": {
+    "message": "OpenAI non risponde. Riprovo automaticamente."
+  },
+  "ui_074": {
+    "message": "Collegamento interrotto. Controlla la diagnostica e ricollegati."
+  },
+  "ui_075": {
+    "message": "Inserisci la password locale per ricollegarti."
+  },
+  "ui_076": {
+    "message": "Configura il collegamento per iniziare."
+  },
+  "ui_077": {
+    "message": "Chiave pronta. Collega una scheda ChatGPT personale."
+  },
+  "ui_078": {
+    "message": "Collegamento al tunnel in corso…"
+  },
+  "ui_079": {
+    "message": "Tunnel e account collegati. Verifica l’app in ChatGPT per iniziare."
+  },
+  "ui_080": {
+    "message": "Tunnel e account collegati. Prova Chat Commander in ChatGPT."
+  },
+  "ui_081": {
+    "message": "Configura Chat Commander"
+  },
+  "ui_082": {
+    "message": "Organizza le chat da ChatGPT: ricerca, lettura e revisione con anteprima e conferma delle modifiche."
+  },
+  "ui_083": {
+    "message": "Informativa sulla privacy"
+  },
+  "ui_084": {
+    "message": "Versione $1"
+  },
+  "ui_085": {
+    "message": "Stato: $1. Risposte accettate dal tunnel: $2."
+  },
+  "setup_001": {
+    "message": "Collega Chat Commander, un passaggio alla volta. Dopo il riavvio riparti dallo sblocco della chiave."
+  },
+  "setup_002": {
+    "message": "Prepara la chiave di collegamento"
+  },
+  "setup_003": {
+    "message": "Questa chiave permette all’estensione di ricevere le richieste dalla tua app ChatGPT. Servono un tunnel OpenAI privato già creato e la sua chiave runtime dedicata. Installare l’estensione non li crea."
+  },
+  "setup_004": {
+    "message": "Hai già salvato la chiave? Sbloccala qui con la password locale. Questa password non è quella di ChatGPT e non viene inviata a OpenAI."
+  },
+  "setup_005": {
+    "message": "Crea il tunnel e la chiave seguendo la guida OpenAI"
+  },
+  "setup_006": {
+    "message": "Salva la chiave e continua"
+  },
+  "setup_007": {
+    "message": "Sblocca la chiave"
+  },
+  "setup_008": {
+    "message": "Chiave pronta. Continua al passaggio 2: collega la scheda ChatGPT."
+  },
+  "setup_009": {
+    "message": "Collega la tua scheda ChatGPT"
+  },
+  "setup_010": {
+    "message": "Apri ChatGPT, accedi al tuo account personale e attendi che la pagina sia caricata. Torna qui e scegli la scheda da collegare: servirà all’estensione per leggere le chat e verificare le modifiche richieste."
+  },
+  "setup_011": {
+    "message": "Il browser ti chiederà il permesso per chatgpt.com. Il risultato del collegamento compare subito sotto il pulsante. La scheda collegata è protetta da spostamento e cancellazione."
+  },
+  "setup_012": {
+    "message": "Prima completa il passaggio 1. Poi potrai scegliere e collegare una scheda."
+  },
+  "setup_013": {
+    "message": "Nessuna scheda disponibile. Apri ChatGPT qui sotto, accedi e torna a questa pagina."
+  },
+  "setup_014": {
+    "message": "Scheda collegata: $1. Continua al passaggio 3."
+  },
+  "setup_015": {
+    "message": "Permesso negato. Per collegare la scheda, premi di nuovo il pulsante e consenti l’accesso a chatgpt.com."
+  },
+  "setup_016": {
+    "message": "Collegamento della scheda in corso… Il risultato apparirà qui."
+  },
+  "setup_017": {
+    "message": "Connetti la scheda selezionata"
+  },
+  "setup_018": {
+    "message": "Usa Chat Commander in ChatGPT"
+  },
+  "setup_019": {
+    "message": "Prima completa i passaggi 1 e 2. Il collegamento all’app si verifica dentro ChatGPT, non salvando di nuovo la chiave."
+  },
+  "setup_020": {
+    "message": "Collega una volta l’app Chat Commander al tuo tunnel nelle impostazioni di ChatGPT. Dopo un aggiornamento degli strumenti usa Manage → Refresh tools. Se l’app è già collegata e aggiornata, non ricrearla."
+  },
+  "setup_021": {
+    "message": "Poi scrivi questo messaggio nella conversazione ChatGPT. L’elenco restituito e gli eventuali errori compariranno nella chat: è lì che verifichi il funzionamento completo."
+  },
+  "setup_022": {
+    "message": "Ho collegato l’app e aggiornato gli strumenti"
+  },
+  "setup_023": {
+    "message": "App segnata come configurata. Ora prova il messaggio in ChatGPT: questa conferma non è un test degli strumenti."
+  },
+  "setup_024": {
+    "message": "Dopo il riavvio: sblocca la chiave, apri una scheda ChatGPT autenticata e attendi la riconnessione allo stesso account. Se non parte, torna al passaggio 2."
+  },
+  "setup_025": {
+    "message": "Gestisci il collegamento"
+  },
+  "setup_026": {
+    "message": "Bloccare ferma il tunnel e richiede di nuovo la password. Dimenticare rimuove anche la chiave cifrata salvata: per ripartire dovrai reinserire la chiave runtime."
+  },
+  "setup_027": {
+    "message": "Stato del tunnel"
+  },
+  "setup_028": {
+    "message": "Salvataggio in corso… Il risultato apparirà qui."
+  },
+  "setup_029": {
+    "message": "Sblocco in corso… Il risultato apparirà qui."
+  },
+  "setup_030": {
+    "message": "Controllo chiave e tunnel"
+  },
+  "setup_031": {
+    "message": "Prossimo passo: $1"
+  }
+}

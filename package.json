@@ -1,0 +1,13 @@
+{
+  "name": "chat-commander",
+  "version": "0.12.2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-isolation=none tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

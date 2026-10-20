@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Chat Commander PoC",
+  "version": "0.12.2",
+  "description": "__MSG_ui_082__",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "optional_permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://api.openai.com/*"
+  ],
+  "background": {
+    "service_worker": "worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "__MSG_ui_081__",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "options_page": "options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src https://api.openai.com; base-uri 'none'; frame-ancestors 'none'"
+  },
+  "optional_host_permissions": [
+    "https://chatgpt.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "64": "icons/icon-64.png",
+    "128": "icons/icon-128.png"
+  },
+  "default_locale": "en"
+}

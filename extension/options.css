@@ -1,0 +1,31 @@
+:root {font: 16px/1.55 system-ui, sans-serif; color-scheme: light dark; --line: #8886; --accent: #2268b3;}
+* {box-sizing: border-box;}
+body {margin: 0;}
+main {max-width: 780px; margin: 40px auto; padding: 0 24px 48px;}
+h1 {display: flex; gap: 12px; align-items: center; font-size: 1.8rem;}
+h2 {font-size: 1.15rem;}
+p {margin: 12px 0;}
+label {display: block; margin-top: 18px;}
+input, select {width: 100%; padding: 10px; font: inherit; margin-top: 6px;}
+button {padding: 10px 16px; margin: 12px 8px 0 0; font: inherit; cursor: pointer;}
+button:disabled {opacity: .55; cursor: default;}
+:focus-visible {outline: 3px solid var(--accent); outline-offset: 3px;}
+[hidden] {display: none !important;}
+details {margin: 18px 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px;}
+summary {cursor: pointer; font-weight: 650;}
+.setup-step {padding: 0; overflow: clip;}
+.setup-step > summary {padding: 18px;}
+.setup-step[data-current="true"] {border: 2px solid var(--accent);}
+.step-body {padding: 0 20px 20px;}
+.number {display: inline-grid; place-items: center; width: 30px; height: 30px; border: 1px solid currentColor; border-radius: 50%; margin-right: 8px;}
+.step-state {display: block; margin: 6px 0 0 43px; font-weight: 400; font-size: .9rem;}
+.check {display: flex; gap: 10px; align-items: start;}
+.check input {width: auto; margin-top: 6px;}
+.notice {padding: 14px 18px; background: #2268b310; border-left: 4px solid var(--accent);}
+.feedback {padding: 10px 12px; background: #55886618; border-left: 3px solid #558866; overflow-wrap: anywhere;}
+.feedback:empty {display: none;}
+.hint {font-size: .92rem;}
+pre {white-space: pre-wrap; overflow-wrap: anywhere; font-size: .92rem;}
+.prompt {padding: 16px; background: #8881; border: 1px solid var(--line); border-radius: 6px; user-select: all;}
+footer {margin-top: 24px; font-size: .9rem;}
+@media (max-width: 520px) {main {padding: 0 14px 28px; margin-top: 20px;} .step-body {padding: 0 14px 16px;} button {width: 100%;} h1 {font-size: 1.5rem;}}
