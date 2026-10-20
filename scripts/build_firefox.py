@@ -25,8 +25,7 @@ def build():
     manifest['browser_specific_settings'] = {
         'gecko': {'id': 'chat-commander-poc@local.invalid', 'strict_min_version': '140.0',
                   'data_collection_permissions': {'required': [
-                      'authenticationInfo', 'personalCommunications', 'websiteContent']}},
-        'gecko_android': {'strict_min_version': '142.0'}
+                      'authenticationInfo', 'personalCommunications', 'websiteContent']}}
     }
     (OUTPUT / 'manifest.json').write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + '\n')
     print(OUTPUT / 'manifest.json')

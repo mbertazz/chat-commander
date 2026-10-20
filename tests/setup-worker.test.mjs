@@ -43,18 +43,17 @@ async function scenario() {
   assert.equal(memory.config, undefined); assert.equal(memory.liveSource, undefined); assert.ok(local.vault);
   assert.equal((await send({type: 'unlock', password: 'wrong-but-long-password'})).ok, false); assert.equal(memory.config, undefined);
   // Simulate a full browser/worker restart: retain only on-disk extension storage.
-  await send({type: 'markToolsRefreshed'});
+  assert.equal(messageListener({type: 'markToolsRefreshed'}, sender, () => assert.fail()), undefined);
   for (const k of Object.keys(memory)) delete memory[k];
   await import(new URL('./extension/worker.js?restart', `file://${process.cwd()}/`));
   const restarted = (await send({type: 'setupState'})).data;
   assert.equal(restarted.vaultSaved, true); assert.equal(restarted.unlocked, false);
-  assert.equal(restarted.needsToolRefresh, false); assert.equal(memory.config, undefined);
+  assert.equal(restarted.needsToolRefresh, true); assert.equal(memory.config, undefined);
   assert.equal((await send({type: 'unlock', password})).ok, true);
   assert.equal(memory.config.apiKey, key); assert.ok(memory.liveSource); // Restored same account without another toolbar click.
   removedListener({origins: ['https://chatgpt.com/*']});
   await send({type: 'setupState'}); assert.equal(memory.liveSource, undefined); assert.equal(local.autoReconnect, false);
-  assert.equal((await send({type: 'markToolsRefreshed'})).ok, true);
-  assert.equal((await send({type: 'setupState'})).data.needsToolRefresh, false);
+  assert.equal((await send({type: 'setupState'})).data.needsToolRefresh, true);
   assert.equal((await send({type: 'disconnect'})).ok, true);
   assert.equal(local.vault, undefined); assert.equal(memory.config, undefined); assert.equal(local.trustedSourceHash, undefined);
   // Exercise the actual options module: key submission and explicit tab pairing are separate steps.

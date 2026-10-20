@@ -58,7 +58,7 @@ test('cursor mismatch, repeated cursors, schema changes and account switches fai
 });
 test('MCP exposes search only in live mode and rejects invalid arguments before page access', async () => {
   const api = apiFor(() => assert.fail()); const dispatch = liveDispatcher(api);
-  assert.deepEqual((await dispatch(command('tools/list', {}))).resp_json.result.tools.map(t => t.name), ['list_chats', 'search_chats', 'get_chat', 'rename_chat', 'set_chat_archived', 'read_chat', 'begin_review', 'read_review_chat', 'prepare_review', 'get_review', 'cancel_review', 'apply_review_step', 'list_projects', 'get_project', 'create_project', 'move_chat', 'delete_chat']);
+  assert.deepEqual((await dispatch(command('tools/list', {}))).resp_json.result.tools.map(t => t.name), ['list_chats', 'search_chats', 'get_chat', 'rename_chat', 'set_chat_archived', 'read_chat', 'begin_review', 'read_review_chat', 'prepare_review', 'prepare_project_plan', 'get_review', 'cancel_review', 'apply_review_step', 'list_projects', 'get_project', 'create_project', 'move_chat', 'delete_chat']);
   for (const args of [{query: '', limit: 5}, {query: 'ok', limit: 11}, {query: 'ok', limit: 5, url: 'x'}, {query: 'ok', limit: 5, cursor: null}]) {
     assert.equal((await dispatch(command('tools/call', {name: 'search_chats', arguments: args}))).resp_json.error.code, -32602);
   }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0 — Development
+
+- Require an exact in-chat confirmation for individual renames, archives and restores as well as all other writes.
+- Refresh remounted cards from live reports, show explicit partial resume, reject step replay and revoke terminal approval tokens.
+- Keep bounded same-account read-only reports after source reconnection; distinguish pre-injection failures from uncertain writes.
+- Add one confirmed project creation/move plan for reviewed groups and bounded overview reading for up to 50 recent candidates.
+- Show observed ChatGPT catalog/tool traffic, add offline setup guidance and read-only schema checks.
+- Use stable translation IDs, English model messages, readable modules and Node 22.22/24 test support; remove Android compatibility declaration.
+
+
 ## 0.12.2
 
 Version-only increment from tested 0.12.1 for the public Mozilla submission. Existing extension ID, review-v5 resource and 0.12.1 catalog retained.

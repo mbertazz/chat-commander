@@ -6,13 +6,16 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    strategy:
+      matrix:
+        node: ['22.22', '24']
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version: ${{ matrix.node }}
           package-manager-cache: false
       - run: npm test
       - run: python3 scripts/build_firefox.py

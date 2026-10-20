@@ -50,21 +50,21 @@ test('read/review/preview never writes and never stores or repeats conversation 
 });
 test('apply requires private capability, binds revision, runs only exact approved steps and reports each', async () => {
   const f = fixture(); const review_id = await ready(f); const preview = await f.invoke('prepare_review', proposal(review_id));
-  const cap = preview._meta.reviewApproval;
+  const cap = {...preview._meta.reviewApproval, expected_step: 1};
   await assert.rejects(f.invoke('apply_review_step', {...cap, approval_token: '0'.repeat(72)}), /review_approval_required/);
   assert.equal(f.writes.length, 0);
   let report;
-  for (let i = 0; i < 3; i++) report = (await f.invoke('apply_review_step', cap)).structuredContent;
+  for (let i = 0; i < 3; i++) report = (await f.invoke('apply_review_step', {...cap, expected_step: i + 1})).structuredContent;
   assert.equal(report.status, 'completed'); assert.equal(report.counts.applied, 3);
   assert.deepEqual(f.writes.map(w => w.name), ['rename_chat', 'set_chat_archived', 'rename_chat']);
   assert.equal(f.writes[1].args.expected_title, 'Better title'); assert.equal(f.state.get(id1).archived, true);
-  await f.invoke('apply_review_step', cap); assert.equal(f.writes.length, 3);
+  await assert.rejects(f.invoke('apply_review_step', cap), /review_approval_required/); assert.equal(f.writes.length, 3);
 });
 test('natural-language exceptions are represented by replacement proposal; old preview cannot execute', async () => {
   const f = fixture(); const review_id = await ready(f); const first = await f.invoke('prepare_review', proposal(review_id));
   const second = await f.invoke('prepare_review', {review_id, changes: [{id: id1, title: 'Better title', reason: 'Titles only'}]});
-  await assert.rejects(f.invoke('apply_review_step', first._meta.reviewApproval), /review_approval_required/);
-  const report = (await f.invoke('apply_review_step', second._meta.reviewApproval)).structuredContent;
+  await assert.rejects(f.invoke('apply_review_step', {...first._meta.reviewApproval, expected_step: 1}), /review_approval_required/);
+  const report = (await f.invoke('apply_review_step', {...second._meta.reviewApproval, expected_step: 1})).structuredContent;
   assert.equal(report.status, 'completed'); assert.equal(f.writes.length, 1); assert.equal(f.state.get(id2).title, 'Travel'); assert.equal(f.state.get(id1).archived, false);
 });
 test('unread, failed, partial and unsupported content block unsupported archive proposals', async () => {
@@ -94,9 +94,9 @@ test('snapshot membership, duplicate ids and reading continuation validated; no 
 });
 test('state conflict stops remaining steps and reports partial outcomes', async () => {
   const f = fixture(); const review_id = await ready(f); const preview = await f.invoke('prepare_review', proposal(review_id));
-  await f.invoke('apply_review_step', preview._meta.reviewApproval);
+  await f.invoke('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1});
   f.state.get(id1).title = 'Changed elsewhere';
-  const report = (await f.invoke('apply_review_step', preview._meta.reviewApproval)).structuredContent;
+  const report = (await f.invoke('apply_review_step', {...preview._meta.reviewApproval, expected_step: 2})).structuredContent;
   assert.equal(report.status, 'attention'); assert.equal(report.counts.applied, 1); assert.equal(report.counts.conflicts, 1); assert.equal(report.counts.skipped, 1);
   assert.equal(f.writes.length, 1); assert.equal(f.state.get(id2).title, 'Travel');
 });
@@ -109,18 +109,18 @@ test('lost write outcome is not retried and pending operations remain unapplied'
   const review_id = (await mgr.handle('begin_review', {}, source)).structuredContent.review_id;
   for (const id of [id1, id2]) await mgr.handle('read_review_chat', {review_id, id}, source);
   const preview = await mgr.handle('prepare_review', proposal(review_id), source);
-  const report = (await mgr.handle('apply_review_step', preview._meta.reviewApproval, source)).structuredContent;
+  const report = (await mgr.handle('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1}, source)).structuredContent;
   assert.equal(report.counts.unknown, 1); assert.equal(report.counts.skipped, 2);
-  await mgr.handle('apply_review_step', preview._meta.reviewApproval, source); assert.equal(attempts, 1);
+  await assert.rejects(mgr.handle('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1}, source), /review_approval_required/); assert.equal(attempts, 1);
 });
 test('cancel preserves finished work and prevents later writes; old plans cannot bypass single-action gate', async () => {
   const f = fixture(); const review_id = await ready(f);
   assert.throws(() => f.manager.assertIndividualAllowed(id1), /review_use_confirmation/);
   const preview = await f.invoke('prepare_review', proposal(review_id));
-  await f.invoke('apply_review_step', preview._meta.reviewApproval);
+  await f.invoke('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1});
   const report = (await f.invoke('cancel_review', {review_id})).structuredContent;
   assert.equal(report.status, 'cancelled'); assert.equal(report.counts.applied, 1); assert.equal(report.counts.skipped, 2);
-  await assert.rejects(f.invoke('apply_review_step', preview._meta.reviewApproval), /review_cancelled/);
+  await assert.rejects(f.invoke('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1}), /review_cancelled/);
   f.manager.assertIndividualAllowed(id1); assert.equal(f.writes.length, 1);
 });
 test('expiry, binding change and manager clear invalidate confirmation capabilities', async () => {
@@ -129,7 +129,7 @@ test('expiry, binding change and manager clear invalidate confirmation capabilit
     if (mode === 'expire') f.tick(31 * 60 * 1000);
     if (mode === 'source') f.switch({...source, tabId: 2});
     if (mode === 'clear') f.manager.clear();
-    await assert.rejects(f.invoke('apply_review_step', preview._meta.reviewApproval), /review_expired|review_source_changed/);
+    await assert.rejects(f.invoke('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1}), /review_expired|review_source_changed|review_cancelled/);
     assert.equal(f.writes.length, 0);
   }
 });
@@ -149,7 +149,7 @@ test('RPC resource serves self-contained confirmation component and validates re
   assert.equal(rpc(request('resources/read', {uri: REVIEW_URI})).error.code, -32601);
   assert.equal(validReviewArgs('prepare_review', {review_id: id1, changes: [{id: id1, archive: false, reason: 'X'}]}), false);
   assert.equal(validReviewArgs('apply_review_step', {review_id: id1, revision: 1, confirmed: true}), false);
-  assert.equal(rpc(request('tools/call', {name: 'begin_review', arguments: {limit: 21}}), true).error.code, -32602);
+  assert.equal(rpc(request('tools/call', {name: 'begin_review', arguments: {limit: 51}}), true).error.code, -32602);
   assert.equal(REVIEW_TOOLS.find(t => t.name === 'apply_review_step').annotations.destructiveHint, true);
   assert.deepEqual(REVIEW_TOOLS.find(t => t.name === 'apply_review_step')._meta.ui.visibility, ['app']);
 });
@@ -165,9 +165,9 @@ test('concurrent apply requests cannot duplicate a write, and cancellation durin
   const review_id = (await manager.handle('begin_review', {}, source)).structuredContent.review_id;
   await manager.handle('read_review_chat', {review_id, id: id1}, source);
   const preview = await manager.handle('prepare_review', {review_id, changes: [{id: id1, title: 'New', reason: 'Clearer'}]}, source);
-  const first = manager.handle('apply_review_step', preview._meta.reviewApproval, source);
+  const first = manager.handle('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1}, source);
   await waiting;
-  await assert.rejects(manager.handle('apply_review_step', preview._meta.reviewApproval, source), /review_busy/);
+  await assert.rejects(manager.handle('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1}, source), /review_busy/);
   await manager.handle('cancel_review', {review_id}, source); release();
   const report = (await first).structuredContent;
   assert.equal(report.status, 'cancelled'); assert.equal(f.writes.length, 0);
@@ -176,10 +176,10 @@ test('rereading invalidates a preview; failed replacement cannot leave an old ap
   const f = fixture(); const review_id = await ready(f);
   const first = await f.invoke('prepare_review', proposal(review_id));
   await f.invoke('read_review_chat', {review_id, id: id1});
-  await assert.rejects(f.invoke('apply_review_step', first._meta.reviewApproval), /review_approval_required/);
+  await assert.rejects(f.invoke('apply_review_step', {...first._meta.reviewApproval, expected_step: 1}), /review_approval_required/);
   const second = await f.invoke('prepare_review', proposal(review_id));
   await assert.rejects(f.invoke('prepare_review', {review_id, changes: [{id: outside, title: 'Bad', reason: 'X'}]}), /review_unknown_chat/);
-  await assert.rejects(f.invoke('apply_review_step', second._meta.reviewApproval), /review_approval_required/);
+  await assert.rejects(f.invoke('apply_review_step', {...second._meta.reviewApproval, expected_step: 1}), /review_approval_required/);
   assert.equal(f.writes.length, 0);
 });
 
@@ -194,11 +194,11 @@ test('review excludes source-tab chat by ID and selects a replacement without ti
   await assert.rejects(manager.handle('read_review_chat', {review_id: data.review_id, id: id1}, source), /review_unknown_chat/);
   assert.equal(f.writes.length, 0);
 });
-test('selection remains bounded at 20 and reports a reduced actual count after exclusion', async () => {
+test('selection remains bounded at 50 and reports a reduced actual count after exclusion', async () => {
   const f = fixture(); let requested;
   const manager = createReviewManager({...f.config, activeChatId: async () => id1,
     list: async (source, limit) => {requested = limit; return {chats: [...f.state.values()]};}});
-  const data = (await manager.handle('begin_review', {limit: 20}, source)).structuredContent;
-  assert.equal(requested, 20); assert.equal(data.selected_count, 1); assert.equal(data.requested_count, 20);
+  const data = (await manager.handle('begin_review', {limit: 50}, source)).structuredContent;
+  assert.equal(requested, 50); assert.equal(data.selected_count, 1); assert.equal(data.requested_count, 50);
   assert.equal(data.chats[0].title, 'Travel');
 });

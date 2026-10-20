@@ -1,27 +1,19 @@
-# Validation status — 0.12.2
+# Validation status — 0.13.0 development
 
-Updated 20 October 2026. Experimental, personal-use software; claims below reflect observed checks rather than universal account compatibility.
+## Automated
 
-## Local checks
+141 tests pass locally on Node 24.22.0. Tests include real serialized page-adapter execution with synthetic HTTP responses, MCP/tunnel integration, component bridge simulations, encrypted-key lifecycle, all-write previews, stale-card rehydration, exact-step replay rejection, same-account report recovery and project-plan dependencies. No runtime npm dependencies.
 
-125 tests pass using synthetic browser APIs, in-page VM execution and in-process tool/tunnel flows. Coverage includes identity/document checks, bounded reads, schema validation, pagination, exact confirmation capability/trusted click, duplicate/stale preview protection, no mutation retry, encrypted vault and permission lifecycle, setup progression, English/Italian component localization, filtered diagnostics and package contents/version consistency.
+CI is configured for Node 22.22 and 24. Node 22 is not installed in this environment; its hosted result is not yet verified. The portable runner selects the appropriate isolation flag. Packaging uses Python standard library and produces unsigned install/source archives with SHA-256 files. No new Mozilla upload has occurred.
 
-The source ZIP reproduces the unsigned Firefox ZIP byte for byte. Runtime code has no third-party library or downloaded executable code. Hosted GitHub CI has not yet been verified. Standalone web-ext lint was not run locally; the author supplied Mozilla online validation evidence for signed versions (including 0.12.1) of zero errors and zero warnings.
+## Browser evidence
 
-## Observed in desktop Firefox
+Earlier 0.12.x owner checks covered listing/search/reading, individual actions, project creation/moves, a verified disposable deletion, vault restart/unlock, permission recovery and English settings/component screenshots. Earlier intermittent discovery/deletion failures were not root-caused.
 
-- Listing recent chats, keyword search and continued text reads; individual rename/archive/restore and conflict rejection.
-- Disposable project creation and moving a disposable chat into/out of a project.
-- One deletion reported completed/applied with positive acknowledgement and independent same-account inaccessibility verification; no claim of physical purging.
-- Signed installation survives full browser restart, requires password unlock for the encrypted key and reconnects when the authenticated paired-account tab is available.
-- Revoking ChatGPT host permission blocks fresh reads; explicit grant/pairing restores access.
-- English/Italian settings, local privacy notice, wrong-password refusal, guided steps and retained source-tab selection.
-- Demo discovery among recent chats without manually supplied URLs, full reads and content-grounded recommendations. Separate English preview shows two pending renames, zero applied.
+The new 0.13 flows require fresh authenticated Firefox validation: every-write confirmation, partial-plan reload/resume, same-account report recovery, batch project organization and observed setup feedback. A full 50-chat run, second-account/workspace checks and prolonged lifecycle remain unverified. Android is not declared compatible; Chromium is not supported by current browser evidence.
 
-0.12.2 is a version-only increment from tested 0.12.1 for the public Mozilla channel. The user reports submitting it; public listing/review outcome has not been confirmed.
+## External status
 
-## Remaining limitations
+The owner submitted 0.12.2 to the public Mozilla channel; approval/live listing has not been rechecked. 0.13.0 is a local development update only. GitHub CI must be checked after pushing this update. Recorded real-response fixtures, new host-form screenshots and web-ext lint are outstanding; synthetic tests are not substituted as evidence for them.
 
-Earlier intermittent discovery/deletion failures remain unexplained; successful later tests are not root-cause fixes. Unknown writes must not be retried automatically. Search/project/archive coverage is not exhaustive. Non-text attachment interpretation, physical data erasure, Android/Chromium functionality, extended unattended lifecycle and independent security review are not established. A real second-account browser test was explicitly skipped because no second account was available; synthetic identity-refusal tests pass. Keyboard/screen-reader coverage remains incomplete.
-
-The private tunnel is an owner access boundary, not separate caller authentication or a public OpenAI plugin endpoint. Reviewers may require authorized service access for full functional testing; prerequisites and reproduction instructions accompany the Mozilla submission.
+See [review resolution](review-resolution.md), [connection setup](connection-setup.md) and [manual verification](review-setup.md). No independent security certification or physical data-erasure claim is made.

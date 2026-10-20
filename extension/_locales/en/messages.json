@@ -60,7 +60,7 @@
     "message": "Automatically reconnect to the same account"
   },
   "ui_021": {
-    "message": "The browser requests access to chatgpt.com for direct connection. No messages or cookies are saved. Multiple changes require confirmation inside ChatGPT."
+    "message": "The browser requests access to chatgpt.com. Chat contents and cookies are not stored on disk. Every change requires confirmation inside ChatGPT."
   },
   "ui_022": {
     "message": "Choose the ChatGPT tab to connect"
@@ -346,5 +346,23 @@
   },
   "setup_031": {
     "message": "Next step: $1"
+  },
+  "setup_full_guide": {
+    "message": "Complete ChatGPT setup guide"
+  },
+  "setup_waiting": {
+    "message": "Waiting for ChatGPT to fetch the current tools and complete a tool call. No manual acknowledgement is needed."
+  },
+  "setup_catalog_observed": {
+    "message": "Current tool catalog fetched at $1. Now run the read-only test below."
+  },
+  "setup_tool_observed": {
+    "message": "Successful tool call: $1 at $2. Check its results in the ChatGPT conversation."
+  },
+  "setup_contracts": {
+    "message": "Check ChatGPT read contracts"
+  },
+  "setup_personal_only": {
+    "message": "Select an unambiguous personal ChatGPT profile. Business or multiple-workspace sessions are not supported."
   }
 }

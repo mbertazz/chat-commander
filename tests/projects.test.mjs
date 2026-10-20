@@ -161,27 +161,27 @@ test('MCP create/move/delete prepare only; exact capability confirms once, repor
     const b = backend(); const dispatch = liveDispatcher(apiFor(b));
     const preview = (await call(dispatch, name, args)).result;
     assert.equal(preview.structuredContent.status, 'proposed'); assert.equal(b.writes.length, 0); privateDataAbsent(preview);
-    const cap = preview._meta.reviewApproval;
+    const cap = {...preview._meta.reviewApproval, expected_step: 1};
     assert.ok(!JSON.stringify(preview.structuredContent).includes(cap.approval_token)); assert.ok(!JSON.stringify(preview.content).includes(cap.approval_token));
     const wrong = await call(dispatch, 'apply_review_step', {...cap, approval_token: 'a'.repeat(72)});
     assert.equal(wrong.result.isError, true); assert.equal(b.writes.length, 0);
     const done = (await call(dispatch, 'apply_review_step', cap)).result.structuredContent;
     assert.equal(done.status, 'completed'); assert.equal(done.counts.applied, 1); assert.equal(b.writes.length, 1); privateDataAbsent(done);
-    assert.equal((await call(dispatch, 'apply_review_step', cap)).result.structuredContent.status, 'completed'); assert.equal(b.writes.length, 1);
+    assert.equal((await call(dispatch, 'apply_review_step', cap)).result.isError, true); assert.equal(b.writes.length, 1);
   }
 });
 test('cancel, replacement, expiry, account binding changes and conflicts revoke authorization without any writes', async () => {
   const b = backend(); const api = apiFor(b); const dispatch = liveDispatcher(api);
   const prepare = async () => (await call(dispatch, 'delete_chat', {id})).result;
   const old = await prepare(); const next = await prepare();
-  assert.equal((await call(dispatch, 'apply_review_step', old._meta.reviewApproval)).result.isError, true);
+  assert.equal((await call(dispatch, 'apply_review_step', {...old._meta.reviewApproval, expected_step: 1})).result.isError, true);
   await call(dispatch, 'cancel_review', {review_id: next.structuredContent.review_id});
-  assert.equal((await call(dispatch, 'apply_review_step', next._meta.reviewApproval)).result.isError, true);
+  assert.equal((await call(dispatch, 'apply_review_step', {...next._meta.reviewApproval, expected_step: 1})).result.isError, true);
   const changed = await prepare(); b.chat.title = 'Different now';
-  const report = (await call(dispatch, 'apply_review_step', changed._meta.reviewApproval)).result.structuredContent;
+  const report = (await call(dispatch, 'apply_review_step', {...changed._meta.reviewApproval, expected_step: 1})).result.structuredContent;
   assert.equal(report.status, 'attention'); assert.equal(report.counts.conflicts, 1); assert.equal(b.writes.length, 0);
   const bindingChanged = await prepare(); api.storage.session.get = async () => ({liveSource: {...binding, documentKey: other}});
-  assert.equal((await call(dispatch, 'apply_review_step', bindingChanged._meta.reviewApproval)).result.isError, true);
+  assert.equal((await call(dispatch, 'apply_review_step', {...bindingChanged._meta.reviewApproval, expected_step: 1})).result.isError, true);
   assert.equal(b.writes.length, 0);
 });
 test('single-action plans use existing gates: active chat protection, bulk review locks and individual mutation locks', async () => {
@@ -190,7 +190,7 @@ test('single-action plans use existing gates: active chat protection, bulk revie
   const blocked = await call(dispatch, 'rename_chat', {id, expected_title: b.chat.title, title: 'New'});
   assert.equal(JSON.parse(blocked.result.content[0].text).error, 'review_use_confirmation');
   api.tabs.get = async () => ({url: `https://chatgpt.com/c/${id}`});
-  const report = (await call(dispatch, 'apply_review_step', proposal._meta.reviewApproval)).result.structuredContent;
+  const report = (await call(dispatch, 'apply_review_step', {...proposal._meta.reviewApproval, expected_step: 1})).result.structuredContent;
   assert.equal(report.counts.failed, 1); assert.equal(b.writes.length, 0);
   assert.equal((await call(dispatch, 'delete_chat', {id})).result.isError, true);
 });
@@ -199,12 +199,12 @@ test('lost mutation response reports uncertain once; complete tunnel delivery re
   const preview = (await call(dispatch, 'delete_chat', {id})).result; let posted; let attempts = 0;
   const tunnel = new Tunnel({tunnelId: `tunnel_${'a'.repeat(32)}`, apiKey: 'runtime-key'}, {dispatch, wait: async () => {},
     fetcher: async (url, options) => {
-      if (url.includes('/poll?')) return Response.json({commands: [command('apply_review_step', preview._meta.reviewApproval)]});
+      if (url.includes('/poll?')) return Response.json({commands: [command('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1})]});
       posted = JSON.parse(options.body); return new Response(null, {status: attempts++ === 0 ? 503 : 204});
     }});
   await tunnel.cycle(); assert.equal(b.writes.length, 1); assert.equal(attempts, 2);
   assert.equal(posted.resp_json.result.structuredContent.counts.unknown, 1); privateDataAbsent(posted);
-  await call(dispatch, 'apply_review_step', preview._meta.reviewApproval); assert.equal(b.writes.length, 1);
+  await call(dispatch, 'apply_review_step', {...preview._meta.reviewApproval, expected_step: 1}); assert.equal(b.writes.length, 1);
 });
 
 test('prepared workspace plans share expiry, clear, concurrency and cancellation guards with guided reviews', async () => {
@@ -218,14 +218,14 @@ test('prepared workspace plans share expiry, clear, concurrency and cancellation
     }});
   const expired = await manager.prepareWorkspace('create_project', {name: 'Research'}, binding);
   now += 30 * 60 * 1000;
-  await assert.rejects(manager.handle('apply_review_step', expired._meta.reviewApproval, binding), /review_expired/); assert.equal(writes, 0);
+  await assert.rejects(manager.handle('apply_review_step', {...expired._meta.reviewApproval, expected_step: 1}, binding), /review_expired/); assert.equal(writes, 0);
   const cleared = await manager.prepareWorkspace('create_project', {name: 'Research'}, binding);
-  manager.clear(); await assert.rejects(manager.handle('apply_review_step', cleared._meta.reviewApproval, binding), /review_expired/);
+  manager.clear(); await assert.rejects(manager.handle('apply_review_step', {...cleared._meta.reviewApproval, expected_step: 1}, binding), /review_cancelled/);
   const ready = await manager.prepareWorkspace('create_project', {name: 'Research'}, binding);
   const waiting = new Promise(resolve => {entered = resolve;});
   let resume; release = {promise: new Promise(resolve => {resume = resolve;})};
-  const first = manager.handle('apply_review_step', ready._meta.reviewApproval, binding); await waiting;
-  await assert.rejects(manager.handle('apply_review_step', ready._meta.reviewApproval, binding), /review_busy/);
+  const first = manager.handle('apply_review_step', {...ready._meta.reviewApproval, expected_step: 1}, binding); await waiting;
+  await assert.rejects(manager.handle('apply_review_step', {...ready._meta.reviewApproval, expected_step: 1}, binding), /review_busy/);
   await manager.handle('cancel_review', {review_id: ready.structuredContent.review_id}, binding);
   resume(); assert.equal((await first).structuredContent.status, 'cancelled'); assert.equal(writes, 1); // Already-running operation may finish.
 });
@@ -309,7 +309,7 @@ test('uncertain deletion reports only its phase and HTTP status through the conf
     };
     const dispatch = liveDispatcher(apiFor(b));
     const preview = (await call(dispatch, 'delete_chat', {id})).result;
-    const report = (await call(dispatch, 'apply_review_step', preview._meta.reviewApproval)).result.structuredContent;
+    const report = (await call(dispatch, 'apply_review_step', {...preview._meta.reviewApproval, expected_step: 1})).result.structuredContent;
     assert.equal(report.status, 'attention');
     assert.equal(report.changes[0].error, 'outcome_unknown');
     assert.equal(report.changes[0].diagnostic.phase, phase);
@@ -317,8 +317,14 @@ test('uncertain deletion reports only its phase and HTTP status through the conf
     assert.equal(report.changes[0].diagnostic.write_signal_aborted, false);
     assert.ok(Number.isInteger(report.changes[0].diagnostic.elapsed_ms));
     assert.equal(b.writes.length, 1); privateDataAbsent(report);
-    const replay = (await call(dispatch, 'apply_review_step', preview._meta.reviewApproval)).result.structuredContent;
-    assert.deepEqual(replay.changes[0].diagnostic, report.changes[0].diagnostic);
+    const replay = (await call(dispatch, 'apply_review_step', {...preview._meta.reviewApproval, expected_step: 1})).result;
+    assert.equal(replay.isError, true);
+    if (failure === 'identity') {
+      assert.equal((await call(dispatch, 'get_review', {review_id: report.review_id})).result.isError, true);
+      b.accountChanged = false; // Reconnect the same actual account before reading its report.
+    }
+    const retained = (await call(dispatch, 'get_review', {review_id: report.review_id})).result.structuredContent;
+    assert.deepEqual(retained.changes[0].diagnostic, report.changes[0].diagnostic);
     assert.equal(b.writes.length, 1);
   }
 });

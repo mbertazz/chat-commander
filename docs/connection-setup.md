@@ -1,29 +1,49 @@
-# Setup
+# Connect Chat Commander
 
-## Prerequisites
+This is a personal developer integration. Installation does not create an OpenAI tunnel, grant Platform roles or enable custom MCP connections in ChatGPT. Do not start by buying a plan based on this project: eligibility depends on your account/workspace and must be checked in OpenAI’s current UI.
 
-Use desktop Firefox 140+ and your own personal ChatGPT account. You need authorized OpenAI Secure MCP Tunnel access, a dedicated runtime key and a custom ChatGPT app connection. Installing Chat Commander does not provide those services or entitlements. Follow the [official tunnel guide](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels) to create and associate a private tunnel with the intended organization/workspace. Never use an Admin key as a runtime key or share your production tunnel.
+## 1. Prepare your private tunnel
 
-Credentials belong only in the extension settings, not in chat, command arguments, screenshots or Git.
+Follow the [official Secure MCP Tunnel guide](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels). Creating/managing a tunnel requires Tunnels Read + Manage; running/selecting it requires Read + Use. Platform organization permissions and ChatGPT workspace permissions are separate. Use a tunnel associated with your target personal ChatGPT workspace.
 
-## Installation
+Create a dedicated runtime key with only the required tunnel access. Save the tunnel ID and runtime key locally. Never use an Admin key in the extension. This extension contains the tunnel client and MCP handler: do not run another client against a local server for this setup.
 
-Use a Mozilla-signed XPI for a stable installation. For development, run `python3 scripts/build_firefox.py` and load dist/firefox/manifest.json using about:debugging. Temporary loading is removed on full Firefox exit and cannot verify persistent installation.
+In extension settings, expand **1 — Prepare your connection key**. Enter the tunnel ID/key, optionally save encrypted with a local password (12+ characters), then save. Feedback appears immediately below the form. A saved key alone does not pair a tab or prove ChatGPT can call tools.
 
-## Three numbered steps
+## 2. Pair a personal ChatGPT tab
 
-1. **Prepare your connection key.** Enter the tunnel ID and runtime key. Choose session-only storage or an encrypted saved copy with a long unique local password entered twice. Save and grant OpenAI access if requested. The result is shown inside this step; saving the key does not itself pair a new ChatGPT tab.
-2. **Connect your ChatGPT tab.** Open ChatGPT, sign in and wait for the tab to load. Return to settings, select the intended tab if several are available, and press Connect selected tab. Grant requested ChatGPT access. Bound-state feedback appears below the button. The connected conversation is protected from review/moves/deletion. Automatic reconnection is optional and only trusts the paired account.
-3. **Use Chat Commander in ChatGPT.** Connect the Chat Commander custom app to the same private tunnel in ChatGPT settings. Use Manage → Refresh tools after catalog/resource updates, not on every startup. In the conversation ask: “Use Chat Commander to list my 3 most recent chats. Do not modify anything.” Actual tool results/errors appear in ChatGPT; the settings acknowledgement is not a tool test.
+Open ChatGPT and sign in using a personal account/profile. Wait for the page to load. In **2 — Connect your ChatGPT tab**, allow the requested access and select the intended tab if more than one is available. Press **Connect selected tab**. Its title and result appear in the same step. Keep it open; the chat currently displayed in it is protected from review and writes.
 
-After a full restart, unlock the saved key with the local password, open/load an authenticated ChatGPT tab, then allow same-account reconnection. If it does not reconnect, return to step 2. The local password is not your ChatGPT password and is never sent to OpenAI or saved by the extension.
+![Numbered extension setup, captured in 0.12.x](images/settings-guided-connected-en.png)
 
-## Lock, forget and failures
+This is a real older capture of the numbered layout. In 0.13 the last step reports observed traffic instead of a manual acknowledgement. It is not evidence that 0.13 has passed authenticated browser testing.
 
-Lock stops the tunnel and clears unlocked credentials and pending review state, keeping an encrypted saved key. Disconnect and forget also removes the saved vault and trusted-account binding. A forgotten password requires entering the runtime key again. These controls do not revoke a key at OpenAI; revoke exposed keys there separately.
+## 3. Connect the custom MCP app in ChatGPT
 
-Pending reviews are volatile: restart, source replacement or reconnection can invalidate them. Do not replay old approvals. Different-account pairing must be explicit. Revoking chatgpt.com permission blocks new reads until permission and pairing are restored.
+Use the [official custom MCP setup](https://developers.openai.com/api/docs/guides/custom-mcp-server). Current menu names can vary. If your UI requires developer mode, enable it in the supported workspace settings first; if unavailable, stop and check account/workspace eligibility rather than changing extension permissions.
 
-The current source uses fixed undocumented endpoints. HTTP 429 means stop and wait, not loop requests. Read failures now distinguish bounded phase/status/failure metadata; do not share raw responses or HAR. After an uncertain write, inspect the report and target without blindly repeating the mutation.
+1. Open ChatGPT **Plugins/Apps**, select **+**, then **Add custom MCP server** (older developer-mode UI: **Create app**).
+2. Name it **Chat Commander**.
+3. Under **Connection**, choose **Tunnel** and select/paste the same tunnel ID. This is not a public `/mcp` URL. If absent, check workspace association and Tunnels Read + Use.
+4. For this private personal server, choose **No authentication** for app-level authentication. The extension has no OAuth server. The runtime key authenticates the extension to OpenAI; never paste it into the ChatGPT conversation or the app’s OAuth fields. Keep app/tunnel access private to you.
+5. Review the risk warning and create the connection. Anyone with access to this workspace app/tunnel may be able to call its tools against your paired history. Do not publish or share the connection.
+6. Open its management page and use **Refresh tools** after a catalog update. Version 0.13 changes tool contracts and the confirmation resource, so refresh after loading it. Do not recreate the app on every browser restart.
+7. In a new command conversation, enable/select **Chat Commander** and send:
 
-[Security](../SECURITY.md) · [Validation status](status.md)
+   > Use Chat Commander to list my 3 most recent chats. Do not modify anything.
+
+The returned list or error appears in the conversation. Extension step 3 now shows when ChatGPT fetched the current catalog and when a tool call succeeded. No self-attestation button can mark setup complete. Successful polling alone verifies tunnel access, not tool execution. This evidence is session-local; after restart/unlock invoke a read again.
+
+The fields above are a textual walkthrough, not invented screenshots of ChatGPT. Fresh redacted captures of the host’s current connection form are still needed before a polished public launch; do not include keys or personal chats in them.
+
+## Restart and recovery
+
+After restart unlock the encrypted key, open the authenticated personal tab and wait for same-account reconnect. If it fails, repeat step 2. Saved passwords are not ChatGPT passwords. Missing permissions and different identities never silently establish new trust.
+
+If a card is reopened, wait for its live report. A partial batch offers **Resume remaining operations**; terminal, expired and superseded cards cannot authorize writes. After an uncertain result inspect `get_review` and native ChatGPT state; never repeat the mutation automatically. Reconnecting revokes approvals while retaining read-only reports for the same account until expiry/capacity eviction. A worker restart loses volatile reports; disconnect/forget explicitly purges them.
+
+For schema drift, use **1 → Key and tunnel checks → Check ChatGPT read contracts**. It reads a recent-chat page, a bounded conversation sample and the first owned-project page; the displayed report contains only check names/codes. It sends no writes, records no raw contents and stops on the first failure. This is not a full live contract certification.
+
+Use a Mozilla-signed XPI for stable Firefox installs. Temporary `about:debugging` loads disappear on browser exit. Android is not declared compatible. Never send HAR files, cookies, keys or real chat contents for support.
+
+Retained report access revalidates the live session identity; if the session cannot be verified, reconnect the same account before reading the report.

@@ -31,7 +31,7 @@ test('Firefox package contains exactly current sources, no stale probes, and all
   assert.deepEqual(manifest.background, {scripts: ['worker.js'], type: 'module'});
   assert.equal(manifest.minimum_chrome_version, undefined);
   assert.equal(manifest.browser_specific_settings.gecko.id, 'chat-commander-poc@local.invalid');
-  assert.equal(manifest.browser_specific_settings.gecko_android.strict_min_version, '142.0');
+  assert.equal(manifest.browser_specific_settings.gecko_android, undefined);
   assert.equal(manifest.default_locale, 'en');
   assert.equal(manifest.browser_specific_settings.gecko.strict_min_version, '140.0');
   assert.deepEqual(manifest.browser_specific_settings.gecko.data_collection_permissions.required,

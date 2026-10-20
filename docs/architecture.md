@@ -1,78 +1,40 @@
 # Architecture
 
-Chat Commander puts a private MCP handler and its tunnel client in one extension. It opens no listening socket. No local process or hosted application server sits between the extension and OpenAI.
-
-## Components
+The extension contains an MCP handler and outbound OpenAI tunnel client. There is no inbound listener, daemon, developer backend or chat database.
 
 | Component | Responsibility |
 |---|---|
-| `worker.js` | Browser events, serialized connection changes, lock/unlock and worker lifetime |
-| `connection.mjs` | Explicit tab pairing and optional reconnection to the previously trusted account |
-| `connection-state.mjs` | Derive a single UI phase from actual connection facts; no duplicated persisted status flags |
-| `tunnel.mjs`, `transport-utils.mjs` | Outbound polling, deadlines, cancellation, bounded response-delivery retries |
-| `protocol.mjs` | JSON-RPC validation, MCP initialization and tunnel response envelopes; knows no chat tools or UI HTML |
-| `server.mjs`, `tools.mjs` | Server instructions, tool catalog and argument-validator registry |
-| `live-source.mjs` | Route validated tool calls; check binding/document identity and allowlist page results |
-| `chatgpt-page.mjs` | Sole serialized MAIN-world adapter: session identity, bounded JSON, fixed endpoints, reads and writes |
-| `actions.mjs`, `read-chat.mjs`, `projects.mjs` | Tool schemas, validators and filtered project/workspace results |
-| `review.mjs` | Volatile review state, coverage, exact bulk/single-operation plans, approval capability and sequential execution |
-| `resources.mjs`, `review-widget.mjs` | MCP UI resource and explicit in-chat confirmation component |
-| `vault.mjs`, `config.mjs` | Encrypted optional credential persistence and configuration validation |
-| `options.*`, `platform.mjs` | Minimal settings interface and browser API differences |
+| worker / connection | Serialized key/tab lifecycle, optional same-account reconnect and observed catalog/tool-call feedback |
+| tunnel / protocol | Bounded HTTPS polling, JSON-RPC validation, deadline handling and response-delivery retries without tool replay |
+| live-source | Validates binding, injects adapter and filters returned results; every public write routes to a preview |
+| chatgpt-page | Self-contained serialized MAIN-world adapter; fixed same-origin endpoints, session checks, bounded JSON and independent read-back |
+| review | Volatile exact plans, reading coverage, private revision capability, expected step, project dependencies, reports and cancellation |
+| review-widget / resources | Isolated bilingual confirmation component, review-v6 resource, live status before approval, explicit partial resume |
+| contract-checks | User-triggered read-only schema checks; only names and safe codes returned |
+| vault | Optional local AES-GCM encryption; runtime credentials in session storage only |
 
-The page adapter is intentionally one self-contained function with shared helpers and operation-specific branches. `scripting.executeScript` serializes functions without their module imports or closures. This keeps session credentials in the page without introducing a build-time JavaScript bundler or a permanent content script. The worker validates arguments before injection and filters the returned result again.
+The page adapter remains one function because executeScript serializes it without module closures. Internal helpers are now formatted for reading; adding a bundler is not necessary. Page credentials never return in MCP results.
 
-## Communication boundaries
+## Consent and execution
 
-```mermaid
-sequenceDiagram
-    actor User
-    participant ChatGPT
-    participant OpenAI as OpenAI Tunnel
-    participant Extension as Extension worker
-    participant Page as Selected ChatGPT tab
-    participant API as Internal ChatGPT API
-    User->>ChatGPT: Show my five most recent chats
-    Extension->>OpenAI: Authenticated outbound poll
-    OpenAI-->>Extension: tools/call list_chats({limit: 5})
-    Extension->>Extension: Validate RPC, arguments, deadline, binding
-    Extension->>Page: Verify isolated document marker; inject fixed adapter
-    Page->>API: GET session (same origin)
-    Page->>Page: Hash user ID; compare trusted identity
-    Page->>API: GET non-archived conversations, limit 5
-    API-->>Page: Conversation metadata
-    Page->>API: Recheck session identity
-    Page-->>Extension: Allowlisted metadata, no session credentials
-    Extension->>Extension: Recheck document/binding; filter result
-    Extension->>OpenAI: Correlated MCP response
-    OpenAI-->>ChatGPT: Tool result
-    ChatGPT-->>User: Five conversations
-```
+rename_chat, set_chat_archived, create_project, move_chat and delete_chat prepare only. prepare_review creates title/archive plans; prepare_project_plan converts up to five groups and 50 reviewed chats into one creation/move plan. Existing project IDs/names are exact; new destinations reference only successfully verified creation steps in the same plan. Each move repeats metadata, ownership, sharing and permission checks. No automatic name reuse, sharing or project instruction changes.
 
-| Boundary | Evidence and limitation |
-|---|---|
-| ChatGPT ↔ OpenAI tunnel | Documented private integration; real calls worked on the author’s account. Account access is a prerequisite, not guaranteed by the extension. |
-| OpenAI ↔ extension | Authenticated HTTPS polling, no inbound listener. Protocol subset has local tests and earlier browser evidence, not complete conformance certification. |
-| Extension ↔ selected tab | Optional `activeTab`/`scripting` plus optional `chatgpt.com` access for direct pairing/reconnect. Top frame, isolated per-document marker, optional native document ID. |
-| Page ↔ ChatGPT API | Same-origin session access; token remains in page. Internal endpoints were observed experimentally, not a stable public contract. |
-| Review component ↔ tools | Exact proposal revision plus private approval capability, actual user click, one operation at a time. End-to-end successful batch verification remains pending after the current-chat exclusion fix. |
+Only the app-visible apply_review_step accepts a private capability plus revision and expected_step. Replaying step N cannot advance step N+1. Final/attention/cancelled states revoke the capability. Cards refresh get_review before enabling controls and show superseded/terminal state or explicit remaining-step resume. Old cards cannot replace plans through natural-language promises alone.
 
-## State and failure handling
+Writes compare expected metadata and independently read back. Failure before MAIN injection is not_sent, not unknown. After an injection may have started, browser failures remain conservatively uncertain; adapter-level preflight refusals remain failed. A page injection is not proof that HTTP was sent. Conflicts/failed/unknown outcomes stop remaining steps; no transaction or rollback.
 
-UI phases are `unconfigured`, `locked`, `source_needed`, `connecting`, `app_setup`, `ready` and `attention`. “Ready” means a paired tab and successful polling with the app reminder acknowledged; it does not prove a successful ChatGPT tool invocation.
+## Reports and identity
 
-Tab reload can reconnect only to the trusted account when the user enabled it. Missing permissions or a different account never silently establish new trust. New pairing, lock, disconnect or source invalidation clears pending review approvals. Worker restart loses review plans; browser/extension restart requires unlocking saved credentials. Browser closure means no tool execution; alarms cannot run a closed browser.
+Reconnection/lock revoke pending approvals but retain read-only metadata reports for the same account, subject to TTL/capacity. Worker restart loses reports; disconnect/forget purges them. Reports contain no retained conversation text or credentials. New pairing never authorizes old plans.
 
-Writes read current metadata, compare expected values, then PATCH only the intended field and read back the result. Conflicts stop execution. After PATCH may have started, failure is reported as uncertain and is never automatically retried. Delivery retries reuse the already-computed response; they do not rerun a tool. Multi-step reviews are not transactions and have no automatic rollback.
+An isolated document marker plus optional native document ID protects navigation binding. A SHA-256 fingerprint includes the user and explicit account ID when session/JWT claims expose it; multiple/non-personal workspace claims are refused. Missing claims do not prove workspace isolation. Only personal profiles and private tunnels are supported, not multiuser deployments.
 
-A personal tunnel is the access boundary. The extension does not authenticate individual MCP callers or support multiple tenants. Fingerprint checks bind the browser account, not the remote caller or every possible workspace. See [security](../SECURITY.md).
+## Reading and operational limits
 
-## Deliberate omissions
+Recent selection is bounded at 50, default 10. Overview reads return at most two segments, deeper reads six, with a 12k character cap per call. Partial coverage stays partial and cannot justify archiving. A cursor is bound to the chat revision. There is deliberately no cross-call raw chat cache: continuation downloads bounded JSON again, trading throughput for avoiding retained private text. Large histories may hit HTTP/context/time limits; no 50-chat performance claim is made.
 
-No synthetic production mode, permanent content script, arbitrary endpoint tool, scheduler, database, framework, npm runtime dependency or general workflow engine. Historic probes were removed after the real adapter gained equivalent security and behavior tests. The 0.10.0 catalog adds list_projects, get_project, create_project, move_chat and delete_chat; the confirmation resource is review-v3.html. Refresh tools after this update. The last three public tools prepare only; the existing apply_review_step capability gate performs the one approved write. The existing review engine owns both bulk review and single-operation previews, with one shared volatile capacity, expiry and cancellation policy.
+Tunnel work is deliberately serial and polls one command at a time. No new concurrent mutations were introduced to hide latency. Host requests can still expire in a queue. Reconnect alarms remain bounded; unrelated completed-tab events no longer recheck an already-bound source.
 
-[Validation status](status.md)
+Runtime uses no npm dependencies. Tests run on Node 22.22 and 24 in CI. Firefox desktop 140+ is targeted; Android compatibility is not declared. [Validation status](status.md) distinguishes mocks, past browser checks and pending 0.13 validation.
 
-Project operations use fixed internal endpoint adapters in `chatgpt-page.mjs` and filtered results in `projects.mjs`. No additional permissions, dependencies or installed services are introduced.
-
-0.11.0 localizes settings through native browser catalogs (en/it, English fallback), adds a bundled bilingual privacy notice, targets Firefox desktop 140+ built-in transmission consent, and packages a deterministic unsigned ZIP. Toolbar opening only opens settings; source pairing remains an explicit options action. See [validation status](status.md).
+Retained report access revalidates the live session identity; if the session cannot be verified, reconnect the same account before reading the report.

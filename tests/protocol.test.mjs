@@ -15,7 +15,7 @@ const command = (overrides = {}) => ({command_type: 'jsonrpc', request_id: 'requ
 
 test('real catalog discovery has no synthetic mode and protocol is independent of tools', () => {
   const tools = rpc(request('tools/list')).result.tools;
-  assert.equal(tools.length, 17); assert.equal(new Set(tools.map(t => t.name)).size, tools.length);
+  assert.equal(tools.length, 18); assert.equal(new Set(tools.map(t => t.name)).size, tools.length);
   assert.equal(tools[0].annotations.readOnlyHint, true);
   assert.ok(!tools.some(tool => /SYNTHETIC/.test(tool.description)));
   assert.deepEqual(protocolRpc(request('tools/list')).result.tools, []);
@@ -29,7 +29,7 @@ test('tool calls are validated against the catalog without reading a page in pro
   }
 });
 test('reject invalid limits, extra arguments, methods and malformed JSON-RPC', () => {
-  for (const limit of [undefined, null, '5', 0, -1, 21, 1.5]) {
+  for (const limit of [undefined, null, '5', 0, -1, 51, 1.5]) {
     assert.equal(rpc(request('tools/call', {name: 'list_chats', arguments: {limit}})).error.code, -32602);
   }
   assert.equal(rpc(request('tools/call', {name: 'list_chats', arguments: {limit: 5, url: 'https://example.com'}})).error.code, -32602);

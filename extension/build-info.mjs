@@ -1,3 +1,3 @@
-export const VERSION = '0.12.2';
-// Bump only when clients need to refresh the exposed tools/resources.
-export const CATALOG_VERSION = '0.12.1';
+export const VERSION = '0.13.0';
+// Bump when clients need to refresh exposed tools or resources.
+export const CATALOG_VERSION = '0.13.0';

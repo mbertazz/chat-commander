@@ -60,7 +60,7 @@
     "message": "Ripristina automaticamente il collegamento allo stesso account"
   },
   "ui_021": {
-    "message": "Per il collegamento diretto il browser chiede accesso a chatgpt.com. Nessun messaggio o cookie viene salvato. Le modifiche multiple richiedono conferma dentro ChatGPT."
+    "message": "Il browser chiede accesso a chatgpt.com. Contenuti e cookie non vengono salvati su disco. Ogni modifica richiede conferma dentro ChatGPT."
   },
   "ui_022": {
     "message": "Scegli la scheda ChatGPT da collegare"
@@ -346,5 +346,23 @@
   },
   "setup_031": {
     "message": "Prossimo passo: $1"
+  },
+  "setup_full_guide": {
+    "message": "Guida completa alla configurazione in ChatGPT"
+  },
+  "setup_waiting": {
+    "message": "In attesa che ChatGPT legga gli strumenti attuali ed esegua una chiamata. Non serve una conferma manuale."
+  },
+  "setup_catalog_observed": {
+    "message": "Catalogo attuale letto alle $1. Ora esegui la prova di sola lettura qui sotto."
+  },
+  "setup_tool_observed": {
+    "message": "Chiamata riuscita: $1 alle $2. Controlla il risultato nella conversazione ChatGPT."
+  },
+  "setup_contracts": {
+    "message": "Verifica i contratti di lettura ChatGPT"
+  },
+  "setup_personal_only": {
+    "message": "Seleziona un profilo ChatGPT personale non ambiguo. Sessioni Business o con più workspace non sono supportate."
   }
 }

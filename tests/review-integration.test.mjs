@@ -62,8 +62,8 @@ test('full review over tunnel: read, propose, reduce exception, approve exact pl
   const bypass = await f.call('rename_chat', {id: ids[0], expected_title: 'Chat 0', title: 'Bypass'});
   assert.equal(bypass.isError, true); assert.ok(bypass.content[0].text.includes('review_use_confirmation'));
   const reduced = await f.call('prepare_review', {review_id, changes: [{id: ids[0], title: 'New title', reason: 'Titles only'}]});
-  assert.equal((await f.call('apply_review_step', first._meta.reviewApproval)).isError, true); assert.equal(f.writes.length, 0);
-  const done = await f.call('apply_review_step', reduced._meta.reviewApproval);
+  assert.equal((await f.call('apply_review_step', {...first._meta.reviewApproval, expected_step: 1})).isError, true); assert.equal(f.writes.length, 0);
+  const done = await f.call('apply_review_step', {...reduced._meta.reviewApproval, expected_step: 1});
   assert.equal(done.structuredContent.status, 'completed'); assert.deepEqual(f.writes, [{title: 'New title'}]);
   assert.equal(f.chats[0].is_archived, false); assert.equal(f.chats[1].title, 'Chat 1');
   const report = await f.call('get_review', {review_id}); assert.equal(report.structuredContent.counts.applied, 1);
@@ -75,7 +75,7 @@ test('dispatcher lifecycle clear invalidates preview and source switch prevents 
     await f.call('read_review_chat', {review_id, id: ids[0]});
     const preview = await f.call('prepare_review', {review_id, changes: [{id: ids[0], archive: true, reason: 'Done'}]});
     if (mode === 'clear') f.dispatch.clearReviews(); else f.changeSource();
-    assert.equal((await f.call('apply_review_step', preview._meta.reviewApproval)).isError, true); assert.equal(f.writes.length, 0);
+    assert.equal((await f.call('apply_review_step', {...preview._meta.reviewApproval, expected_step: 1})).isError, true); assert.equal(f.writes.length, 0);
   }
 });
 

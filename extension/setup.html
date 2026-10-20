@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat Commander — ChatGPT setup</title><link rel="stylesheet" href="options.css">
+<main><h1>Connect Chat Commander in ChatGPT</h1>
+<p>Use your own private tunnel and personal ChatGPT profile. Installing this extension does not grant access to OpenAI tunnel or custom MCP features.</p>
+<h2>1. Prepare the connection key</h2><p>Create a private OpenAI tunnel associated with your personal ChatGPT workspace and a dedicated runtime key. Tunnel management requires Read + Manage; selecting/running requires Read + Use. Enter the ID/key only in extension step 1, then save. Optional encryption uses a separate local password.</p>
+<h2>2. Pair the tab</h2><p>Open and sign in to ChatGPT. In extension step 2 allow access, choose the intended loaded tab and connect it. Read the feedback below that button. Keep the tab open. Pairing is separate from saving the key.</p>
+<h2>3. Add the custom app in ChatGPT</h2><ol>
+<li>Open Plugins/Apps → + → Add custom MCP server (older UI: developer-mode Create app). Enable developer mode first if your workspace requires it. If unavailable, check your eligibility.</li>
+<li>Name: <strong>Chat Commander</strong>. Connection: <strong>Tunnel</strong>. Select or paste the same tunnel ID. If missing, verify workspace association and Read + Use permission.</li>
+<li>App-level authentication: <strong>No authentication</strong> for this private personal server. It has no OAuth service. Never put your runtime key in a chat or OAuth field.</li>
+<li>Review the warning and create the connection. Keep it private: anyone who can invoke this workspace app/tunnel may be able to access your paired history.</li>
+<li>After extension updates that change tools, open the app management page and choose <strong>Refresh tools</strong>.</li>
+<li>Enable Chat Commander in a command conversation and run the read-only prompt below.</li></ol>
+<pre>Use Chat Commander to list my 3 most recent chats. Do not modify anything.</pre>
+<p>The list or error appears in ChatGPT. Extension step 3 separately shows the observed catalog fetch and successful tool call. Polling and a saved key alone are not end-to-end success. No manual acknowledgement is required.</p>
+<h2>After a restart</h2><p>Unlock the saved key, open the signed-in tab, then wait for same-account reconnection or explicitly pair again. Invoke a read to verify the tool path. Every write still requires its exact confirmation card.</p>
+<p>Text read from source chats may remain in command-chat history after source deletion. Uncertain writes must not be retried blindly. Reconnection revokes approvals; same-account reports remain in worker memory until expiry or capacity eviction. Restart loses reports; forget purges them.</p>
+<p><a href="https://developers.openai.com/api/docs/guides/secure-mcp-tunnels" target="_blank" rel="noopener">Official tunnel guide</a> · <a href="https://developers.openai.com/api/docs/guides/custom-mcp-server" target="_blank" rel="noopener">Official ChatGPT connection guide</a></p>
+<p>Menu names and account availability can change. This walkthrough does not grant eligibility or provide a public OpenAI plugin listing.</p></main></html>

@@ -15,11 +15,11 @@ test('native catalogs cover both locales, state messages and substitutions with 
   assert.deepEqual(Object.keys(catalogs.it).sort(), Object.keys(catalogs.en).sort());
   for (const locale of ['it', 'en', 'fr']) {
     const t = translator(native(locale));
-    assert.equal(t('Versione $1', '0.11.0'), locale === 'it' ? 'Versione 0.11.0' : 'Version 0.11.0');
+    assert.equal(t('ui_084', '0.11.0'), locale === 'it' ? 'Versione 0.11.0' : 'Version 0.11.0');
     const state = connectionState({unlocked: true, bound: true, needsToolRefresh: false}, {code: 'polling'}, t);
     assert.match(state.message, locale === 'it' ? /Prova/ : /Try/);
     assert.ok(!connectionState({}, {code: 'UNTRUSTED'}, t).message.includes('UNTRUSTED'));
-    assert.match(t('Stato: $1. Risposte accettate dal tunnel: $2.', ['polling', '12']), /polling.*12/);
+    assert.match(t('ui_085', ['polling', '12']), /polling.*12/);
   }
 });
 test('document localization uses textContent, sets language and preserves input values', async () => {

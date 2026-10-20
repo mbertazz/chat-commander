@@ -93,7 +93,7 @@ test('RPC rejects invented paths, bulk, deletion and extra arguments; mutations 
   assert.equal(validActionArgs('rename_chat', {...rename, ids: [id]}), false);
   assert.equal(validActionArgs('delete_chat', {id}), false);
   for (const tool of ACTION_TOOLS.filter(t => t.name !== 'get_chat')) {
-    assert.equal(tool.annotations.readOnlyHint, false); assert.equal(tool.annotations.destructiveHint, true);
+    assert.equal(tool.annotations.readOnlyHint, true); assert.equal(tool.annotations.destructiveHint, false);
   }
   const api = apiFor(() => assert.fail());
   assert.equal((await liveDispatcher(api)(command('rename_chat', {...rename, confirmed: true}))).resp_json.error.code, -32602);
@@ -108,9 +108,9 @@ test('complete MCP poll-action-response verifies metadata, no credentials or ful
       return Response.json({commands: [command('rename_chat', rename)]});
     }});
   await tunnel.cycle();
-  assert.equal(posted.resp_json.result.structuredContent.verified, true);
-  assert.equal(posted.resp_json.result.structuredContent.chat.title, 'After');
-  assert.ok(!JSON.stringify(posted).includes('private-')); assert.equal(b.patches.length, 1);
+  assert.equal(posted.resp_json.result.structuredContent.status, 'proposed');
+  assert.equal(posted.resp_json.result.structuredContent.changes[0].after_title, 'After');
+  assert.ok(!JSON.stringify(posted).includes('private-')); assert.equal(b.patches.length, 0);
 });
 test('document change or cancellation after injection reports uncertain mutation outcome', async () => {
   const b = backend(); const api = apiFor(b.fetch); const original = api.scripting.executeScript;

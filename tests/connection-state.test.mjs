@@ -13,7 +13,7 @@ test('connection phases distinguish local unlock, source pairing, tunnel and app
 });
 test('fatal errors remain visible after credentials are cleared; arbitrary transport text is not rendered', () => {
   const failed = connectionState({...ready, unlocked: false}, {code: 'poll_http_401', stopped: true});
-  assert.equal(failed.phase, 'attention'); assert.match(failed.message, /rifiutata/);
+  assert.equal(failed.phase, 'attention'); assert.equal(failed.message, 'ui_068');
   assert.equal(connectionState({...ready, unlocked: false}, {code: 'invalid_poll_shape', stopped: true}).phase, 'attention');
   assert.ok(!connectionState(ready, {code: 'SECRET-UNTRUSTED-ERROR'}).message.includes('SECRET'));
   assert.equal(connectionState({...ready, unlocked: false}, {code: 'locked'}).phase, 'locked');
