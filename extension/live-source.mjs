@@ -1,3 +1,4 @@
+import { serverInfo, MAX_REVIEW_CANDIDATES } from './server-info.mjs';
 import { readDiagnostic } from './read-diagnostics.mjs';
 import { PROJECT_TOOLS, validProjectArgs, normalizeWorkspaceResult } from './projects.mjs';
 import { REVIEW_TOOLS, ReviewError, createReviewManager } from './review.mjs';
@@ -295,7 +296,7 @@ export async function readLiveChat(api, source, args, signal, deadline = Infinit
     };
 }
 export async function readLiveChats(api, source, limit, signal, deadline = Infinity, searchArgs = null) {
-    if (!Number.isInteger(limit) || limit < 1 || limit > 50)
+    if (!Number.isInteger(limit) || limit < 1 || limit > MAX_REVIEW_CANDIDATES)
         fail('list_schema_unknown');
     if (searchArgs !== null && !validSearchArgs(searchArgs))
         fail('search_schema_unknown');
@@ -401,7 +402,7 @@ export function liveDispatcher(api, observed = async () => { }) {
         workspace: (source, operation, args, signal, deadline) => runWorkspace(api, source, operation, args, signal, deadline),
         validateWorkspace: validProjectArgs,
     });
-    const dispatch = async (command, deadline = Infinity, signal) => {
+    const executeDispatch = async (command, deadline = Infinity, signal) => {
         const body = envelope(command, SERVER);
         if (!body?.resp_json?.result)
             return body;
@@ -462,8 +463,36 @@ export function liveDispatcher(api, observed = async () => { }) {
                 };
             }
         }
-        if (!body.resp_json?.error && !body.resp_json?.result?.isError) {
-            await observed(method, command.jsonrpc.params?.name);
+        return body;
+    };
+    const dispatch = async (command, deadline = Infinity, signal) => {
+        const body = await executeDispatch(command, deadline, signal);
+        const method = command?.jsonrpc?.method;
+        const toolResult = method === 'tools/call' ? body?.resp_json?.result : null;
+        if (toolResult) {
+            let data = toolResult.structuredContent;
+            if (!data && toolResult.content?.length === 1 && toolResult.content[0].type === 'text') {
+                try {
+                    data = JSON.parse(toolResult.content[0].text);
+                }
+                catch { }
+            }
+            if (data && typeof data === 'object' && !Array.isArray(data)) {
+                data = {
+                    ...data, server_info: serverInfo(SERVER.tools)
+                };
+                toolResult.structuredContent = data;
+                toolResult.content = [{
+                        type: 'text', text: JSON.stringify(data)
+                    }];
+            }
+        }
+        if (body?.resp_json?.result && !body.resp_json.result.isError) {
+            // Observation failures must not turn a completed write into a delivery failure.
+            try {
+                await observed(method, command.jsonrpc.params?.name);
+            }
+            catch { }
         }
         return body;
     };

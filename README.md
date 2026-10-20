@@ -6,7 +6,7 @@ Organize your ChatGPT conversations by talking to ChatGPT.
 
 ChatGPT does the reasoning across conversation contents. Chat Commander supplies tools to discover and read chats, prepare an exact proposal, and carry out confirmed operations. You do not need to collect conversation links when discovery succeeds.
 
-**Experimental · 0.13.0 (development) · Firefox desktop 140+ · MIT.** Requires your own private OpenAI Secure MCP Tunnel, a dedicated runtime key, a custom ChatGPT app connection and an authenticated personal ChatGPT tab. Installation does not provide access to these services. Not affiliated with OpenAI or Mozilla.
+**Experimental · 0.13.1 (development) · Firefox desktop 140+ · MIT.** Requires your own private OpenAI Secure MCP Tunnel, a dedicated runtime key, a custom ChatGPT app connection and an authenticated personal ChatGPT tab. Installation does not provide access to these services. Not affiliated with OpenAI or Mozilla.
 
 ## See the workflow
 
@@ -31,7 +31,7 @@ These are actual disposable-data browser captures from 0.12.x, not mockups. The 
 - List recent non-archived chats and search titles/messages with pagination.
 - Read bounded active-branch text and continue through long conversations.
 - Rename, archive and restore individual chats using current-state checks.
-- Review up to 50 recent chats, triage bounded excerpts, deepen selected candidates and prepare evidence-based title/archive suggestions and optional groups.
+- Review 50 recent eligible chats by default, triage bounded excerpts, deepen selected candidates and prepare evidence-based title/archive suggestions and optional groups.
 - List projects; prepare empty project creation, individual moves and permanent single-chat deletion.
 - Turn reviewed groups into one confirmed plan: create up to five projects and move up to 50 chats, sequentially.
 - Require exact in-chat confirmation for every write, including individual renames and archives. Stop on conflicts or uncertain results; never automatically retry mutations.
@@ -58,7 +58,7 @@ The tunnel must stay private to its owner. Any member of a workspace where the a
 
 ## Install and connect
 
-Version 0.13.0 is a local development release and has not been uploaded to Mozilla. The public Mozilla submission for 0.12.2 was sent; a live public listing has not yet been confirmed. Earlier versions were signed for self-distribution. Use a Mozilla-signed XPI for a stable Firefox installation. Local ZIP builds are unsigned and do not bypass signing requirements.
+Version 0.13.1 is a local development release and has not been uploaded to Mozilla. The public Mozilla submission for 0.12.2 was sent; a live public listing has not yet been confirmed. Earlier versions were signed for self-distribution. Use a Mozilla-signed XPI for a stable Firefox installation. Local ZIP builds are unsigned and do not bypass signing requirements.
 
 For development:
 
@@ -68,7 +68,7 @@ python3 scripts/build_firefox.py
 
 Temporarily load `dist/firefox/manifest.json` in `about:debugging#/runtime/this-firefox`. Firefox removes temporary installations on full browser exit.
 
-Open settings and follow three numbered steps: prepare/unlock the key, explicitly connect your personal ChatGPT tab, then configure/refresh the ChatGPT app and try a read-only request. Settings and the confirmation component support English and Italian, with English fallback. [Detailed setup](docs/connection-setup.md), including the ChatGPT-side connection and expected feedback.
+Open settings and follow three numbered steps: prepare/unlock the key, explicitly connect your personal ChatGPT tab, then configure/refresh the ChatGPT app and try a read-only request. Settings and the confirmation component support English and Italian, with English fallback. [Detailed setup](docs/connection-setup.md) and [50-chat demo prompt](docs/demo-prompt.md), including the ChatGPT-side connection and expected feedback.
 
 ## Development
 

@@ -111,7 +111,7 @@
     "message": "Check the app in ChatGPT"
   },
   "ui_038": {
-    "message": "✓ App and tools configured"
+    "message": "✓ Current server contacted by ChatGPT"
   },
   "ui_039": {
     "message": "Key saved encrypted on this device only. Password not retained."
@@ -312,7 +312,7 @@
     "message": "Complete steps 1 and 2 first. Test the app connection inside ChatGPT, rather than saving the key again."
   },
   "setup_020": {
-    "message": "Connect the Chat Commander app to your tunnel once in ChatGPT settings. After a tool update, use Manage → Refresh tools. If the app is already connected and up to date, do not recreate it."
+    "message": "After loading an update: open ChatGPT’s app settings → Manage → Refresh tools. Check that prepare_project_plan is present and enabled. Then start a NEW conversation and select Chat Commander again. Reloading the extension alone does not refresh ChatGPT’s callable catalog."
   },
   "setup_021": {
     "message": "Then send this message in your ChatGPT conversation. The list and any errors will appear in the chat: that is where you verify the full connection."
@@ -364,5 +364,8 @@
   },
   "setup_personal_only": {
     "message": "Select an unambiguous personal ChatGPT profile. Business or multiple-workspace sessions are not supported."
+  },
+  "setup_capabilities": {
+    "message": "Running extension: $1. Reviews: up to $2 chats. Combined project plans available. This does not prove the tools are enabled in your ChatGPT conversation."
   }
 }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.13.1 — Development
+
+- Default reviews to 50 eligible chats, privately overfetch one replacement for the protected source conversation and report exact selection counts.
+- Return actual runtime/catalog versions, limits and advertised model tools in every tool result.
+- Require catalog preflight before broad reviews and document Refresh tools → enable tools → new conversation.
+- Record successful review/preview traffic consistently; observation-storage errors do not alter computed results.
+- Tighten grouping guidance to require explicit shared outcomes, not generic references to tests or tools.
+
 ## 0.13.0 — Development
 
 - Require an exact in-chat confirmation for individual renames, archives and restores as well as all other writes.

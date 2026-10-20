@@ -1,3 +1,4 @@
+import { CATALOG_REFRESH_GUIDANCE } from './server-info.mjs';
 import { TOOLS, validToolArgs } from './tools.mjs';
 import { RESOURCES, readResource } from './resources.mjs';
 import { VERSION } from './build-info.mjs';
@@ -5,6 +6,16 @@ export const SERVER = {
     name: 'chat-commander', version: VERSION,
     tools: TOOLS, validToolArgs, resources: RESOURCES, readResource,
     instructions: [
+        CATALOG_REFRESH_GUIDANCE,
+        [
+            "For organization requests, preflight your callable tools before reading many chats. Use begin_review({limit:50}) so source-chat exclusion and read ",
+            "coverage are recorded automatically. Inspect the runtime server_info; an advertised tool that is absent from your callable set means setup is ",
+            "incomplete, not that the server lacks it."
+        ].join(""),
+        [
+            "Group only conversations with direct content evidence of a shared outcome. Do not group unrelated SFTP, infrastructure, or search chats into release ",
+            "readiness merely because they mention tests or tools. Explain each included chat\u2019s contribution; leave uncertain memberships unselected."
+        ].join(""),
         [
             "Use list_chats as well as keyword search for recent topical discovery. New chats may not be indexed. Resolve returned IDs instead of asking users to ",
             "collect links when discovery works."

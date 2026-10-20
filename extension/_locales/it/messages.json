@@ -111,7 +111,7 @@
     "message": "Verifica l’app in ChatGPT"
   },
   "ui_038": {
-    "message": "✓ App e tool configurati"
+    "message": "✓ ChatGPT ha contattato il server attuale"
   },
   "ui_039": {
     "message": "Chiave salvata cifrata solo su questo dispositivo. Password non conservata."
@@ -312,7 +312,7 @@
     "message": "Prima completa i passaggi 1 e 2. Il collegamento all’app si verifica dentro ChatGPT, non salvando di nuovo la chiave."
   },
   "setup_020": {
-    "message": "Collega una volta l’app Chat Commander al tuo tunnel nelle impostazioni di ChatGPT. Dopo un aggiornamento degli strumenti usa Manage → Refresh tools. Se l’app è già collegata e aggiornata, non ricrearla."
+    "message": "Dopo aver caricato un aggiornamento: apri le impostazioni dell’app in ChatGPT → Manage → Refresh tools. Verifica che prepare_project_plan sia presente e abilitato. Poi apri una NUOVA conversazione e seleziona di nuovo Chat Commander. Ricaricare solo l’estensione non aggiorna il catalogo degli strumenti di ChatGPT."
   },
   "setup_021": {
     "message": "Poi scrivi questo messaggio nella conversazione ChatGPT. L’elenco restituito e gli eventuali errori compariranno nella chat: è lì che verifichi il funzionamento completo."
@@ -364,5 +364,8 @@
   },
   "setup_personal_only": {
     "message": "Seleziona un profilo ChatGPT personale non ambiguo. Sessioni Business o con più workspace non sono supportate."
+  },
+  "setup_capabilities": {
+    "message": "Estensione attiva: $1. Revisioni fino a $2 chat. Piani progetto combinati disponibili. Questo non dimostra che gli strumenti siano abilitati nella conversazione ChatGPT."
   }
 }

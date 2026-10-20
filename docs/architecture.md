@@ -23,6 +23,10 @@ Only the app-visible apply_review_step accepts a private capability plus revisio
 
 Writes compare expected metadata and independently read back. Failure before MAIN injection is not_sent, not unknown. After an injection may have started, browser failures remain conservatively uncertain; adapter-level preflight refusals remain failed. A page injection is not proof that HTTP was sent. Conflicts/failed/unknown outcomes stop remaining steps; no transaction or rollback.
 
+## Catalog visibility
+
+Every tool result carries model-visible server_info with actual runtime/catalog versions, limits and advertised model tools. This diagnoses a stale callable catalog but does not update host state. The custom app must be refreshed and its tools enabled in ChatGPT, followed by a new conversation. Model instructions require this preflight before a large read. Setup observations are recorded for successful reviews/previews as well as ordinary reads; storage observation failure never converts an already-computed result into a tool failure.
+
 ## Reports and identity
 
 Reconnection/lock revoke pending approvals but retain read-only metadata reports for the same account, subject to TTL/capacity. Worker restart loses reports; disconnect/forget purges them. Reports contain no retained conversation text or credentials. New pairing never authorizes old plans.
@@ -31,7 +35,7 @@ An isolated document marker plus optional native document ID protects navigation
 
 ## Reading and operational limits
 
-Recent selection is bounded at 50, default 10. Overview reads return at most two segments, deeper reads six, with a 12k character cap per call. Partial coverage stays partial and cannot justify archiving. A cursor is bound to the chat revision. There is deliberately no cross-call raw chat cache: continuation downloads bounded JSON again, trading throughput for avoiding retained private text. Large histories may hit HTTP/context/time limits; no 50-chat performance claim is made.
+Recent selection is bounded at 50, default 50. A private extra candidate replaces the protected source chat where available; the result reports requested/selected/scanned counts and request_fulfilled. Public list requests remain capped at 50. Overview reads return at most two segments, deeper reads six, with a 12k character cap per call. Partial coverage stays partial and cannot justify archiving. A cursor is bound to the chat revision. There is deliberately no cross-call raw chat cache: continuation downloads bounded JSON again, trading throughput for avoiding retained private text. Large histories may hit HTTP/context/time limits; no 50-chat performance claim is made.
 
 Tunnel work is deliberately serial and polls one command at a time. No new concurrent mutations were introduced to hide latency. Host requests can still expire in a queue. Reconnect alarms remain bounded; unrelated completed-tab events no longer recheck an already-bound source.
 

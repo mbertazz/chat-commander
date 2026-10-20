@@ -1,3 +1,4 @@
+import { serverInfo } from './server-info.mjs';
 import { checkSourceContracts } from './contract-checks.mjs';
 import { sealConfig, openConfig, validVault } from './vault.mjs';
 import { sourceTabs, bindSelected, restoreSource } from './connection.mjs';
@@ -111,7 +112,7 @@ async function setupState() {
     catch { }
     return {
         vaultSaved: validVault(vault), unlocked: validConfig(config), bound: Boolean(liveSource), sourceTabId: Number.isInteger(liveSource?.tabId) ? liveSource.tabId : null,
-        autoReconnect: autoReconnect !== false, needsToolRefresh: appObservation.catalog !== CATALOG_VERSION || !appObservation.toolAt, appObservation, tabs
+        autoReconnect: autoReconnect !== false, needsToolRefresh: appObservation.catalog !== CATALOG_VERSION || !appObservation.toolAt, appObservation, serverInfo: serverInfo(), tabs
     };
 }
 async function setup() {

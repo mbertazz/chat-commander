@@ -29,3 +29,7 @@ The 21 October review concerned 0.12.2. This file records implemented changes an
 No authenticated 0.13 browser run, live 50-chat benchmark, second-account/workspace exercise, fresh ChatGPT setup screenshots, web-ext lint or recorded-response fixture capture has been claimed. The earlier 0.12.x browser evidence does not certify these changed flows. The 20 English manual scenarios are a protocol; they are not an unattended LLM evaluation runner. Installing the new build and refreshing tools is the next validation step before Mozilla upload or a Show HN launch.
 
 Retained report access revalidates the live session identity; if the session cannot be verified, reconnect the same account before reading the report.
+
+## Follow-up: 50-chat catalog regression — 0.13.1
+
+The owner’s broad-review output used only 20 results and could not call prepare_project_plan. Current local MCP metadata already exposes that tool and a 50-chat maximum, so stale/disabled client metadata is the leading explanation, not a verified host diagnosis. The update adds runtime/catalog facts to all tool responses, preflight/refresh instructions and a 50-chat default. One extra private candidate fills the source-chat exclusion; requested/selected/scanned counts remain explicit. Six tests added: 147 total pass locally. Do not describe Refresh tools or new-conversation behavior as fixed until the host is checked.

@@ -36,6 +36,7 @@ function renderOverview() {
     $('app-prerequisite').hidden = progress.canAcknowledge;
     $('key-feedback').textContent = progress.keyDone ? state.bound ? t('ui_033') : t('setup_008') : '';
     const observed = state.appObservation;
+    $('app-capabilities').textContent = state.serverInfo ? t('setup_capabilities', [state.serverInfo.version, String(state.serverInfo.limits.review_chats)]) : '';
     $('app-feedback').textContent = observed?.toolAt ? t('setup_tool_observed', [observed.tool, observed.toolAt])
         : observed?.catalogAt ? t('setup_catalog_observed', observed.catalogAt) : t('setup_waiting');
     $('app-status').textContent = progress.canAcknowledge && transport?.code !== 'polling' ? view.message : '';

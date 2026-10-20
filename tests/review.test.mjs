@@ -199,6 +199,6 @@ test('selection remains bounded at 50 and reports a reduced actual count after e
   const manager = createReviewManager({...f.config, activeChatId: async () => id1,
     list: async (source, limit) => {requested = limit; return {chats: [...f.state.values()]};}});
   const data = (await manager.handle('begin_review', {limit: 50}, source)).structuredContent;
-  assert.equal(requested, 50); assert.equal(data.selected_count, 1); assert.equal(data.requested_count, 50);
+  assert.equal(requested, 51); assert.equal(data.selected_count, 1); assert.equal(data.requested_count, 50);
   assert.equal(data.chats[0].title, 'Travel');
 });

@@ -108,7 +108,7 @@ export async function chatgptPage(operation, args = {}, expectedUserHash = null,
         const mode = operation === 'search_chats' ? 'search' : 'live';
         const limit = args?.limit;
         const searchArgs = args;
-        if (!Number.isInteger(limit) || limit < 1 || limit > 50)
+        if (!Number.isInteger(limit) || limit < 1 || limit > 51)
             return { code: 'invalid_source_request' };
         let stage = 'session';
         const startedAt = Date.now();
