@@ -86,6 +86,6 @@ Earlier intermittent discovery and deletion failures remain unexplained. A succe
 
 Android and Chromium functionality, exhaustive search coverage and prolonged lifecycle behavior are unverified. A real second-account browser test was skipped; automatic identity-refusal tests pass. Automated tests and Mozilla signing are not an independent security audit. This private-tunnel architecture does not supply a public OpenAI plugin-directory endpoint.
 
-[Architecture](docs/architecture.md) · [Design decisions](docs/decisions/006-consolidation.md) · [Manual review checks](docs/review-setup.md) · [Conversational test suite](docs/conversational-tests.md)
+[Architecture](docs/architecture.md) · [Manual review checks](docs/review-setup.md) · [Conversational test suite](docs/conversational-tests.md)
 
 Support: sbaginov@yahoo.it. Do not include credentials, cookies, HAR files or private conversations in reports. Licensed under the [MIT License](LICENSE).

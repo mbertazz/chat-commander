@@ -71,8 +71,8 @@ A personal tunnel is the access boundary. The extension does not authenticate in
 
 No synthetic production mode, permanent content script, arbitrary endpoint tool, scheduler, database, framework, npm runtime dependency or general workflow engine. Historic probes were removed after the real adapter gained equivalent security and behavior tests. The 0.10.0 catalog adds list_projects, get_project, create_project, move_chat and delete_chat; the confirmation resource is review-v3.html. Refresh tools after this update. The last three public tools prepare only; the existing apply_review_step capability gate performs the one approved write. The existing review engine owns both bulk review and single-operation previews, with one shared volatile capacity, expiry and cancellation policy.
 
-[Consolidation decision](decisions/006-consolidation.md) · [Validation status](status.md)
+[Validation status](status.md)
 
-Project operations and their candidate endpoint contracts are detailed in [decision 007](decisions/007-projects-moves-deletion.md). No new permissions, dependencies or installed services are introduced.
+Project operations use fixed internal endpoint adapters in `chatgpt-page.mjs` and filtered results in `projects.mjs`. No additional permissions, dependencies or installed services are introduced.
 
 0.11.0 localizes settings through native browser catalogs (en/it, English fallback), adds a bundled bilingual privacy notice, targets Firefox desktop 140+ built-in transmission consent, and packages a deterministic unsigned ZIP. Toolbar opening only opens settings; source pairing remains an explicit options action. See [validation status](status.md).
