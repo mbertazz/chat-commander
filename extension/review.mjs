@@ -1,7 +1,7 @@
 import { readDiagnostic, readErrorCode } from './read-diagnostics.mjs';
 import { MAX_RECENT_CHATS, MAX_REVIEW_CANDIDATES } from './server-info.mjs';
 import { workspaceDiagnostic } from './workspace-diagnostics.mjs';
-export const REVIEW_URI = 'ui://chat-commander/review-v7.html';
+export const REVIEW_URI = 'ui://chat-commander/review-v8.html';
 const uuid = {
     type: 'string', pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
 };
@@ -196,11 +196,17 @@ const result = data => ({
 // Volatile bounded metadata only: no messages, excerpts, credentials or durable storage.
 export function createReviewManager({ list, read, action, currentBinding, activeChatId = async () => null, workspace, validateWorkspace = () => false, now = Date.now, randomUUID = () => globalThis.crypto.randomUUID() }) {
     const reviews = new Map();
+    const expiredReviews = new Map();
     const ttl = 30 * 60 * 1000;
     function cleanup() {
         for (const [id, review] of reviews)
-            if (now() >= review.expiresAt && !review.busy)
+            if (now() >= review.expiresAt && !review.busy) {
+                expiredReviews.set(id, { userHash: review.userHash, until: now() + ttl });
                 reviews.delete(id);
+            }
+        for (const [id, entry] of expiredReviews)
+            if (now() >= entry.until) expiredReviews.delete(id);
+        while (expiredReviews.size > 40) expiredReviews.delete(expiredReviews.keys().next().value);
     }
     function reserveCapacity() {
         cleanup();
@@ -217,8 +223,11 @@ export function createReviewManager({ list, read, action, currentBinding, active
     function load(id, source, reportOnly = false) {
         cleanup();
         const r = reviews.get(id);
-        if (!r || now() >= r.expiresAt)
-            fail('review_expired');
+        if (!r) {
+            const expired = expiredReviews.get(id);
+            fail(expired && expired.userHash === source?.userHash ? 'review_expired' : 'review_unavailable');
+        }
+        if (now() >= r.expiresAt) fail('review_expired');
         if (reportOnly ? !source?.userHash || r.userHash !== source.userHash : r.binding !== bindingKey(source))
             fail('review_source_changed');
         return r;
@@ -439,6 +448,7 @@ export function createReviewManager({ list, read, action, currentBinding, active
             }
             if (forget)
                 reviews.clear();
+            if (forget) expiredReviews.clear();
         },
         async handle(name, args, source, signal, deadline = Infinity) {
             if (!validReviewArgs(name, args))
@@ -599,6 +609,7 @@ export function createReviewManager({ list, read, action, currentBinding, active
                     }
                     await guard(r, source, signal, deadline);
                     r.steps = steps;
+                    r.expiresAt = now() + ttl;
                     r.revision++;
                     r.status = 'proposed';
                     r.token = randomUUID() + randomUUID();
@@ -655,6 +666,7 @@ export function createReviewManager({ list, read, action, currentBinding, active
                 });
                 r.steps = steps;
                 r.groups = groups;
+                r.expiresAt = now() + ttl;
                 r.revision++;
                 r.status = steps.length ? 'proposed' : 'completed';
                 r.token = steps.length ? randomUUID() + randomUUID() : null;

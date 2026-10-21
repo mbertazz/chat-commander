@@ -79,7 +79,7 @@ test('reports survive reconnect with the same account but approvals and other-ac
   f.setBinding({...source, userHash: 'b'.repeat(64)});
   await assert.rejects(f.call('get_review', {review_id: r.review_id}), /review_source_changed/);
   f.setBinding(source); f.manager.clear(true);
-  await assert.rejects(f.call('get_review', {review_id: r.review_id}), /review_expired/);
+  await assert.rejects(f.call('get_review', {review_id: r.review_id}), /review_unavailable/);
 });
 test('terminal successful reports retain results after lock/invalidation', async () => {
   const f = fixture(); const p = await titles(f);

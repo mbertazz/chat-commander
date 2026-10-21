@@ -16,8 +16,14 @@ export function reviewWidget() {
     let synchronized = false;
     let refreshing = false;
     let renderedLive = false;
+    let unavailable = null;
+    let expiryTimer;
     // Host-provided locale only; never infer language from untrusted chat text.
     const messages = {
+        review_expiry: { en: 'Expires {time} · {minutes} min remaining. Reloading the extension can lose this review earlier.', it: 'Scade il {time} · {minutes} min rimanenti. Ricaricare l’estensione può far perdere prima questa revisione.' },
+        review_expired: { en: 'This review has expired. Check applied steps before preparing a replacement.', it: 'Questa revisione è scaduta. Controlla i passi applicati prima di preparare una nuova proposta.' },
+        review_lost: { en: 'The extension no longer holds this review, for example after a restart. Expiry is not confirmed. Check actual state before preparing a replacement.', it: 'L’estensione non conserva più questa revisione, ad esempio dopo un riavvio. La scadenza non è confermata. Controlla lo stato effettivo prima di preparare una nuova proposta.' },
+        review_connection: { en: 'Unable to check this review. It may be a connection problem; expiry is not confirmed. Do not repeat changes.', it: 'Impossibile verificare la revisione. Potrebbe essere un problema di connessione; la scadenza non è confermata. Non ripetere le modifiche.' },
         review_049: {
             en: 'Resume remaining operations', it: 'Riprendi le operazioni restanti'
         },
@@ -277,14 +283,28 @@ export function reviewWidget() {
             }, '*');
         });
     }
+    function hasExpired() {
+        return Number.isFinite(Date.parse(preview?.expires_at)) && Date.now() >= Date.parse(preview.expires_at);
+    }
+    function updateExpiry() {
+        clearTimeout(expiryTimer);
+        const element = document.querySelector('#expiry');
+        const expires = Date.parse(preview?.expires_at);
+        if (element) element.textContent = Number.isFinite(expires)
+            ? hasExpired() ? t('review_expired') : t('review_expiry', {
+                time: new Date(expires).toLocaleString(language), minutes: Math.ceil((expires - Date.now()) / 60000)
+            }) : '';
+        controls();
+        if (Number.isFinite(expires) && !hasExpired()) expiryTimer = setTimeout(updateExpiry, 1000);
+    }
     function controls() {
-        apply.disabled = !initialized || !synchronized || running || submitted.has(key(preview)) || !capability?.approval_token || capability.review_id !== preview?.review_id || capability.revision !== preview?.revision || !preview?.changes?.length || !['proposed', 'applying'].includes(preview.status) || preview.changes.some(c => c.status === 'running');
+        apply.disabled = hasExpired() || Boolean(unavailable) || !initialized || !synchronized || running || submitted.has(key(preview)) || !capability?.approval_token || capability.review_id !== preview?.review_id || capability.revision !== preview?.revision || !preview?.changes?.length || !['proposed', 'applying'].includes(preview.status) || preview.changes.some(c => c.status === 'running');
         const deleting = preview?.changes?.some(c => c.action === 'delete_chat');
         apply.textContent = preview?.status === 'completed' ? t('review_001')
             : running ? t('review_002') : submitted.has(key(preview)) ? t('review_003')
                 : preview?.status === 'applying' ? t('review_049') : deleting ? t('review_004') : t('review_005');
         apply.className = deleting ? 'danger' : '';
-        cancel.disabled = !preview || ['cancelled', 'completed', 'attention'].includes(preview.status);
+        cancel.disabled = hasExpired() || Boolean(unavailable) || !preview || ['cancelled', 'completed', 'attention'].includes(preview.status);
     }
     function render(data) {
         if (!data || typeof data.review_id !== 'string' || !Array.isArray(data.changes))
@@ -299,7 +319,7 @@ export function reviewWidget() {
             proposed: t('review_006'), reading: t('review_007'),
             applying: t('review_008'), completed: t('review_009'), attention: t('review_010'), cancelled: t('review_011')
         };
-        status.textContent = data.status === 'applying' && !running && !data.changes.some(c => c.status === 'running') ? t('review_054') : states[data.status] ?? t('review_012');
+        status.textContent = unavailable ? t(unavailable) : data.status === 'applying' && !running && !data.changes.some(c => c.status === 'running') ? t('review_054') : states[data.status] ?? t('review_012');
         const revision = document.querySelector('#revision');
         if (revision)
             revision.textContent = synchronized ? t('review_053', { revision: data.revision }) : '';
@@ -381,7 +401,7 @@ export function reviewWidget() {
         }
         const counts = data.counts;
         document.querySelector('#counts').textContent = counts ? t('review_047', counts) : '';
-        controls();
+        updateExpiry();
         try {
             window.openai?.notifyIntrinsicHeight?.(document.documentElement.scrollHeight);
         }
@@ -393,6 +413,7 @@ export function reviewWidget() {
         if (result._meta?.reviewApproval)
             capability = result._meta.reviewApproval;
         if (authoritative && result.structuredContent?.review_id) {
+            unavailable = null;
             synchronized = true;
             renderedLive = true;
             render(result.structuredContent);
@@ -409,8 +430,13 @@ export function reviewWidget() {
         const result = await request('tools/call', {
             name, arguments: args
         });
-        if (result?.isError)
-            throw new Error('tool_error');
+        if (result?.isError) {
+            let code = result.structuredContent?.error;
+            if (!code) {
+                try { code = JSON.parse(result.content?.find(c => c.type === 'text')?.text ?? '{}').error; } catch { }
+            }
+            throw new Error(['review_expired', 'review_unavailable'].includes(code) ? code : 'tool_error');
+        }
         receiveResult(result, true);
         return result?.structuredContent;
     }
@@ -430,7 +456,7 @@ export function reviewWidget() {
         catch { }
     }
     apply.addEventListener('click', async (event) => {
-        if (!event.isTrusted || !initialized || !synchronized || running || submitted.has(key(preview)) || !capability?.approval_token || !['proposed', 'applying'].includes(preview?.status) ||
+        if (hasExpired() || unavailable || !event.isTrusted || !initialized || !synchronized || running || submitted.has(key(preview)) || !capability?.approval_token || !['proposed', 'applying'].includes(preview?.status) ||
             capability.review_id !== preview.review_id || capability.revision !== preview.revision)
             return;
         // Approval is for this exact immutable revision; tokens never enter model-visible messages.
@@ -530,10 +556,11 @@ export function reviewWidget() {
             if (current?.review_id !== id)
                 throw new Error('wrong_review');
         }
-        catch {
+        catch (error) {
             synchronized = false;
             capability = null;
-            status.textContent = t('review_052');
+            unavailable = error.message === 'review_expired' ? 'review_expired' : error.message === 'review_unavailable' ? 'review_lost' : 'review_connection';
+            status.textContent = t(unavailable);
         }
         finally {
             refreshing = false;
@@ -566,7 +593,7 @@ export function reviewWidget() {
 export const REVIEW_HTML = `<!doctype html><html lang=""><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chat Commander review confirmation</title>
 <style>body{font:14px system-ui,sans-serif;margin:0;padding:16px;color:inherit;background:transparent}h2{font-size:18px;margin:0 0 12px}#output{padding-left:24px;max-height:480px;overflow-y:auto}#output ul{padding-left:20px}#output>li{margin:18px 0}#output strong{font-size:15px}li{margin:12px 0}p{margin:4px 0}small{opacity:.75}button{font:inherit;padding:10px 14px;border-radius:8px;border:1px solid #aaa;margin:6px 8px 0 0;cursor:pointer}button:disabled{opacity:.5;cursor:default}#apply{background:#183e32;color:white}#apply.danger{background:#a01818}a{color:inherit}#status,#counts{margin:12px 0}</style>
 <h2 id="heading">Confirm changes</h2><p id="instructions">Review the changes before confirming. To change or cancel the proposal, tell ChatGPT before confirming.</p>
-<p id="revision"></p><p id="status" role="status" aria-live="polite">Loading proposal…</p><p id="excluded-label">Chats excluded from this proposal:</p><ul id="excluded"></ul><ol id="output"></ol><p id="counts" aria-live="polite"></p>
+<p id="revision"></p><p id="expiry" role="timer" aria-live="off"></p><p id="status" role="status" aria-live="polite">Loading proposal…</p><p id="excluded-label">Chats excluded from this proposal:</p><ul id="excluded"></ul><ol id="output"></ol><p id="counts" aria-live="polite"></p>
 <details><summary id="groups-label">Suggested groups (no chats moved)</summary><ul id="groups"></ul></details>
 <button id="apply" disabled>Confirm and apply these changes</button><button id="cancel" disabled>Cancel remaining operations</button>
 <script>(${reviewWidget.toString()})();</script></html>`;

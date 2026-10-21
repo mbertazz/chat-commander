@@ -1,8 +1,8 @@
-# Validation status — 0.13.4 development
+# Validation status — 0.13.5 development
 
 ## Automated
 
-156 tests pass locally on Node 24.22.0. Tests include real serialized page-adapter execution with synthetic HTTP responses, MCP/tunnel integration, component bridge simulations, encrypted-key lifecycle, all-write previews, stale-card rehydration, exact-step replay rejection, same-account report recovery and project-plan dependencies. No runtime npm dependencies.
+158 tests pass locally on Node 24.22.0. Tests include real serialized page-adapter execution with synthetic HTTP responses, MCP/tunnel integration, component bridge simulations, encrypted-key lifecycle, all-write previews, stale-card rehydration, exact-step replay rejection, same-account report recovery and project-plan dependencies. No runtime npm dependencies.
 
 CI is configured for Node 22.22 and 24. Node 22 is not installed in this environment; the owner verified both hosted jobs for 0.13.0, while 0.13.1 needs a new CI run. The portable runner selects the appropriate isolation flag. Packaging uses Python standard library and produces unsigned install/source archives with SHA-256 files. No new Mozilla upload has occurred.
 
@@ -33,3 +33,7 @@ Live user evidence: 0.13.2 successfully prepared 3 new projects and 12 moves; no
 ## 0.13.4 failed read diagnostics
 
 Owner reported one failed review read followed by four more reads before the host stopped, despite a stop-on-error prompt. Reproduced code defects: read_review_chat used isError:false and told callers to continue, discarded bounded causes, and readLiveChat shadowed its message catalog with a local message list, throwing a ReferenceError on the error path. These are corrected with tool-error signaling, explicit stop instructions, allowlisted cause codes and bounded conversation diagnostics retained in get_review. This does not establish why the owner's original HTTP/read request failed; that payload is unavailable. Added tests cover an HTTP403 through the real page adapter and extension boundary, plus rate-limit/schema/private-error handling and reports. 156 tests pass; authenticated verification pending. Host callers must still honor stop instructions and inspect each sequential result; no server-side batching or automatic retry is introduced. Owner confirmed 0.13.3 tool-call observation after Refresh tools; grouped card remains untested because the fresh review stopped during reading.
+
+## 0.13.5 review lifetime
+
+Owner successfully read the previously failing conversation in 0.13.4, then prepared the 50-chat project plan; grouped layout verified by screenshot. The card later disabled confirmation and get_review reported the old ambiguous review_expired message; expiry versus worker restart cannot be established retrospectively. No batch writes tested. New proposals renew their 30-minute deadline only after successful preparation; widgets show date/time and countdown, block local expired approval and distinguish known-expired, missing-memory and connectivity failures. A bounded in-memory expiry marker (40 entries, 30 minutes, account-bound, no chat content) supports classification after ordinary cleanup, but cannot survive restart. 158 tests pass including expiry after prolonged reading, cleanup versus missing manager and card error rendering; authenticated new-card verification remains pending.

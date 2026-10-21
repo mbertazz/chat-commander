@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.5
+
+- Show expiry date/time and remaining minutes in confirmation cards; disable local confirmation after expiry.
+- Give newly prepared review/project proposals a fresh 30-minute confirmation window after successful preparation, rather than consuming it during all prior reads. Reads and reports alone do not extend it.
+- Distinguish known expired reviews from missing volatile reviews and connection/check failures. Retain only a bounded, short-lived expiry marker per review/account; restarts still lose all review state.
+
 ## 0.13.4
 
 - Mark failed review reads as MCP tool errors and instruct callers to stop, including inside batches; retain safe error codes and diagnostics in read-only reports.

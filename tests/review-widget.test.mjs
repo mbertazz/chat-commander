@@ -14,10 +14,10 @@ function widget(locale = 'it', legacyLocale) {
   function element() {return {children: [], events: new Map(), disabled: true, textContent: '',
     replaceChildren() {this.children = [];}, append(...nodes) {this.children.push(...nodes);},
     addEventListener(type, handler) {this.events.set(type, handler);}};}
-  for (const id of ['output', 'status', 'apply', 'cancel', 'groups', 'counts', 'excluded', 'heading', 'instructions', 'excluded-label', 'groups-label']) elements.set(id, element());
+  for (const id of ['output', 'status', 'apply', 'cancel', 'groups', 'counts', 'excluded', 'heading', 'instructions', 'excluded-label', 'groups-label', 'expiry']) elements.set(id, element());
   const parent = {postMessage: value => {
     requests.push(value);
-    if (value.params?.name === 'get_review') queueMicrotask(() => respond(value, {structuredContent: current}));
+    if (value.params?.name === 'get_review') queueMicrotask(() => respond(value, current?.isError ? current : {structuredContent: current}));
   }};
   const documentElement = {lang: locale};
   const window = {parent, openai: legacyLocale ? {locale: legacyLocale} : undefined, addEventListener: (type, handler) => listeners.set(type, handler)};
@@ -186,4 +186,24 @@ test('project plans show one reason per destination and preserve all operation s
   assert.ok(rows.every(row => row.children.at(-1).textContent === 'Awaiting confirmation'));
   assert.equal(rows.flatMap(row => row.children).filter(node => node.textContent === 'Shared purpose').length, 0);
   assert.equal(w.requests.filter(r => r.params?.name === 'apply_review_step').length, 0);
+});
+
+test('cards show expiry, block expired approval and distinguish missing review from connectivity', async () => {
+  const expired = widget('en'); expired.respond(expired.requests[0], {}); await turn();
+  const old = plan(); old.expires_at = new Date(Date.now() - 1000).toISOString();
+  expired.show(old); await turn();
+  assert.match(expired.elements.get('expiry').textContent, /has expired/);
+  assert.equal(expired.elements.get('apply').disabled, true);
+  await expired.click('apply');
+  assert.equal(expired.requests.filter(r => r.params?.name === 'apply_review_step').length, 0);
+  for (const [error, expected] of [['review_expired', /has expired/], ['review_unavailable', /no longer holds/], ['source_read_failed', /connection problem/]]) {
+    const w = widget('en'); w.respond(w.requests[0], {}); await turn();
+    const data = plan(); data.expires_at = new Date(Date.now() + 29 * 60000).toISOString();
+    w.show(data);
+    w.setCurrent({isError: true, content: [{type: 'text', text: JSON.stringify({error})}]});
+    await turn();
+    assert.match(w.elements.get('status').textContent, expected);
+    assert.equal(w.elements.get('apply').disabled, true);
+    assert.match(w.elements.get('expiry').textContent, /min remaining/);
+  }
 });

@@ -224,3 +224,21 @@ test('failed review reads are tool errors with retained safe diagnostics and sto
     assert.equal(f.writes.length, 0);
   }
 });
+
+test('new proposals provide a full confirmation window and distinguish known expiry from missing memory', async () => {
+  const f = fixture(); const review_id = await ready(f);
+  f.tick(20 * 60 * 1000);
+  const p = await f.invoke('prepare_review', proposal(review_id));
+  f.tick(15 * 60 * 1000); // Initial reading lifetime elapsed; fresh proposal still valid.
+  assert.equal((await f.invoke('get_review', {review_id})).structuredContent.status, 'proposed');
+  f.tick(16 * 60 * 1000);
+  await assert.rejects(f.invoke('get_review', {review_id}), /review_expired$/);
+  // Cleanup on a different request must not erase the known-expiry classification.
+  await f.invoke('begin_review', {});
+  await assert.rejects(f.invoke('get_review', {review_id}), /review_expired$/);
+  const freshManager = createReviewManager(f.config);
+  await assert.rejects(freshManager.handle('get_review', {review_id}, source), /review_unavailable$/);
+  f.manager.clear(true);
+  await assert.rejects(f.invoke('get_review', {review_id}), /review_unavailable$/);
+  assert.equal(f.writes.length, 0);
+});
