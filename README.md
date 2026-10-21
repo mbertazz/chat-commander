@@ -16,6 +16,23 @@ ChatGPT ↔ OpenAI Secure MCP Tunnel ↔ Firefox worker ↔ selected ChatGPT tab
 
 No daemon, developer-hosted backend or runtime npm dependencies. Uses undocumented ChatGPT endpoints.
 
+## Example
+
+**1. Ask for a plan**
+
+![Request to read the itinerary and hiking-gear demo chats, check existing projects and prepare a confirmation card without applying changes](docs/images/demo-project-plan-prompt-en.png)
+
+Read the relevant chats, check the destination, prepare the plan. The request explicitly leaves execution for confirmation.
+
+<details>
+<summary><strong>2. Verified result — historical card</strong></summary>
+
+![Completed Dolomites demo: one project created and two chats moved, with three operations applied and verified; the card also displays expired and unavailable-review notices](docs/images/demo-project-plan-result-en.png)
+
+One project created, two chats moved, all three operations reported applied and verified. This capture also shows expired/unavailable-review notices: it preserves the historical result, not a fresh active confirmation. No text or UI elements were edited.
+
+</details>
+
 ## Tools
 
 - Discover recent chats; search titles and messages with pagination.
