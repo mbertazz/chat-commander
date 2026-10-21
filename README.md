@@ -6,7 +6,7 @@ Organize your ChatGPT conversations by talking to ChatGPT.
 
 ChatGPT does the reasoning across conversation contents. Chat Commander supplies tools to discover and read chats, prepare an exact proposal, and carry out confirmed operations. You do not need to collect conversation links when discovery succeeds.
 
-**Experimental · 0.13.2 (development) · Firefox desktop 140+ · MIT.** Requires your own private OpenAI Secure MCP Tunnel, a dedicated runtime key, a custom ChatGPT app connection and an authenticated personal ChatGPT tab. Installation does not provide access to these services. Not affiliated with OpenAI or Mozilla.
+**Experimental · 0.13.3 (development) · Firefox desktop 140+ · MIT.** Requires your own private OpenAI Secure MCP Tunnel, a dedicated runtime key, a custom ChatGPT app connection and an authenticated personal ChatGPT tab. Installation does not provide access to these services. Not affiliated with OpenAI or Mozilla.
 
 ## See the workflow
 
@@ -58,7 +58,7 @@ The tunnel must stay private to its owner. Any member of a workspace where the a
 
 ## Install and connect
 
-Version 0.13.2 is a local development release and has not been uploaded to Mozilla. The public Mozilla submission for 0.12.2 was sent; a live public listing has not yet been confirmed. Earlier versions were signed for self-distribution. Use a Mozilla-signed XPI for a stable Firefox installation. Local ZIP builds are unsigned and do not bypass signing requirements.
+Version 0.13.3 is a local development release and has not been uploaded to Mozilla. The public Mozilla submission for 0.12.2 was sent; a live public listing has not yet been confirmed. Earlier versions were signed for self-distribution. Use a Mozilla-signed XPI for a stable Firefox installation. Local ZIP builds are unsigned and do not bypass signing requirements.
 
 For development:
 

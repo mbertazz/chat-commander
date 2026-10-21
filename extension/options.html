@@ -63,6 +63,8 @@
     <button id="connect-source" type="button"><span data-i18n="setup_017">Connect selected tab</span></button>
     <p id="source-message" class="feedback" role="status" aria-live="polite"></p>
     <p id="live-status" class="feedback" role="status" aria-live="polite"></p>
+    <button id="continue-source" type="button" hidden data-i18n="setup_continue">Use this tab and continue to step 3</button>
+    <p class="hint" data-i18n="setup_source_review">After unlocking, check the connected tab shown above. To use another tab, select it and click Connect selected tab. Then continue to step 3.</p>
     <label class="check"><input id="automatic" type="checkbox" checked> <span data-i18n="ui_020">Automatically reconnect to the same account</span></label>
     <p class="hint"><span data-i18n="setup_024">After restarting: unlock your key, open an authenticated ChatGPT tab and wait to reconnect to the same account. If it does not reconnect, return to step 2.</span></p>
     </div>
@@ -71,6 +73,7 @@
     <summary><span class="number" aria-hidden="true">3</span> <span data-i18n="setup_018">Use Chat Commander in ChatGPT</span> <span id="step-tools" class="step-state"></span></summary>
     <div class="step-body">
     <p id="app-prerequisite" class="hint"><span data-i18n="setup_019">Complete steps 1 and 2 first. Test the app connection inside ChatGPT, rather than saving the key again.</span></p>
+    <div id="app-content" hidden>
     <div id="tools-reminder">
       <p><a href="setup.html" target="_blank" rel="noopener" data-i18n="setup_full_guide">Complete ChatGPT setup guide</a></p>
       <p><span data-i18n="setup_020">After loading an update: open ChatGPT’s app settings → Manage → Refresh tools. Check that prepare_project_plan is present and enabled. Then start a NEW conversation and select Chat Commander again. Reloading the extension alone does not refresh ChatGPT’s callable catalog.</span></p>
@@ -80,6 +83,7 @@
     <p><span data-i18n="setup_021">Then send this message in your ChatGPT conversation. The list and any errors will appear in the chat: that is where you verify the full connection.</span></p>
     <pre class="prompt" tabindex="0">Use Chat Commander to list my 3 most recent chats. Do not modify anything.</pre>
     <p id="app-status" class="feedback" role="status" aria-live="polite"></p>
+    </div>
     </div>
   </details>
   <details id="manage">

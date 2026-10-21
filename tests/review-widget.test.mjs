@@ -168,3 +168,22 @@ test('remounted terminal or superseded cards cannot enable approval from stored 
     if (state === 'superseded') assert.match(w.elements.get('status').textContent, /superseded/);
   }
 });
+
+test('project plans show one reason per destination and preserve all operation states', async () => {
+  const w = widget('en'); w.respond(w.requests[0], {}); await turn();
+  const data = plan();
+  data.changes = [
+    {action: 'create_project', before_title: '<Project>', reason: 'Shared purpose', status: 'pending'},
+    ...['First', 'Second'].map(before_title => ({action: 'move_chat', before_title, destination_name: '<Project>', origin_name: 'No project', reason: 'Shared purpose', status: 'pending'}))
+  ];
+  w.show(data);
+  const groups = w.elements.get('output').children;
+  assert.equal(groups.length, 1);
+  assert.equal(groups[0].children[0].textContent, '<Project>');
+  assert.equal(groups[0].children[1].textContent, 'Shared purpose');
+  const rows = groups[0].children[2].children;
+  assert.equal(rows.length, 3);
+  assert.ok(rows.every(row => row.children.at(-1).textContent === 'Awaiting confirmation'));
+  assert.equal(rows.flatMap(row => row.children).filter(node => node.textContent === 'Shared purpose').length, 0);
+  assert.equal(w.requests.filter(r => r.params?.name === 'apply_review_step').length, 0);
+});

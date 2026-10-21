@@ -1,4 +1,4 @@
-# Validation status — 0.13.2 development
+# Validation status — 0.13.3 development
 
 ## Automated
 
@@ -25,3 +25,7 @@ See [review resolution](review-resolution.md), [connection setup](connection-set
 ## Project-plan argument rejection
 
 The owner reports a live 50-chat selection and completed overview pass, followed by JSON-RPC -32602 on a three-project/twelve-move proposal. No card or writes occurred. The exact submitted arguments have been requested, not received. Explicit project_id:null was reproduced as rejected in 0.13.1 and is now supported; it is a plausible cause, not a confirmed diagnosis of the owner’s request. Five regression tests cover three new projects/twelve moves preparing without writes, omitted/null IDs, bounded private-safe diagnostics and pre-execution rejection. Live confirmation of the original case remains pending.
+
+## 0.13.3 setup and confirmation usability
+
+Live user evidence: 0.13.2 successfully prepared 3 new projects and 12 moves; nothing applied. Initial invalid-argument cause remains unknown (project_id was omitted, so explicit null was not its cause). A transient tunnel read failure recovered and the same review resumed. The confirmation screenshot repeated a shared reason for every move. Local 0.13.3 groups destinations while retaining every operation and state. Setup previously advanced to step 3 on automatic reconnect; it now pauses at step 2 to check the actual connected tab before continuing, with a visible selector and contextual feedback. Missing tabs cannot appear connected based on saved metadata alone. New behavior has automated coverage; authenticated browser validation remains pending.

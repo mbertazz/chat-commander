@@ -84,6 +84,9 @@ async function scenario() {
   assert.equal(elements.get('key-step').open, false);
   await elements.get('connect-source').events.click();
   assert.equal(permissionRequests, 2); assert.ok(memory.liveSource);
+  assert.equal(elements.get('source-step').open, true);
+  assert.equal(elements.get('continue-source').hidden, false);
+  await elements.get('continue-source').events.click();
   assert.equal(elements.get('app-step').open, true);
   assert.equal(elements.get('source-message').textContent, ''); // No stale instruction after pairing.
   for (const id of ['key', 'vault-password', 'vault-confirm']) assert.equal(elements.get(id).value, '');
@@ -98,12 +101,32 @@ async function scenario() {
   await import(new URL('./extension/options.js?reopen', `file://${process.cwd()}/`));
   assert.equal(elements.get('source-tab').value, '1');
   assert.equal(memory.liveSource, pairedBeforeReopen);
+  assert.equal(elements.get('source-step').open, true);
+  elements.get('source-tab').value = '2';
+  await elements.get('source-tab').events.change();
+  assert.equal(elements.get('continue-source').hidden, true);
+  await elements.get('continue-source').events.click();
+  assert.equal(elements.get('app-content').hidden, true);
+  assert.equal(memory.liveSource, pairedBeforeReopen); // Selecting is not reconnecting.
+  elements.get('source-tab').value = '1';
+  await elements.get('source-tab').events.change();
+  await elements.get('continue-source').events.click();
+  assert.equal(elements.get('app-content').hidden, false);
   globalThis.chrome.tabs.query = async () => [{id: 1, url: 'https://chatgpt.com/', status: 'complete', title: 'ChatGPT'}];
   await elements.get('lock').events.click(); assert.equal(memory.config, undefined); assert.ok(local.vault);
   assert.equal(elements.get('unlock').hidden, false);
   elements.get('unlock-password').value = password;
   await elements.get('unlock').events.submit({preventDefault() {}, submitter: {disabled: false}});
   assert.equal(elements.get('unlock-password').value, ''); assert.ok(memory.config); assert.ok(memory.liveSource);
+  assert.equal(elements.get('source-step').open, true);
+  assert.equal(elements.get('app-content').hidden, true);
+  assert.equal(elements.get('source-tab').value, '1');
+  await elements.get('continue-source').events.click();
+  assert.equal(elements.get('app-step').open, true);
+  assert.equal(elements.get('app-content').hidden, false);
+  // A saved binding must not claim a source when the tab is no longer available.
+  globalThis.chrome.tabs.query = async () => [];
+  assert.equal((await send({type: 'setupState'})).data.bound, false);
   await send({type: 'disconnect'});
   // Saving a session-only key removes an older encrypted vault explicitly.
   local.vault = {old: true};

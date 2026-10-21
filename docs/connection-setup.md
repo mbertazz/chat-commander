@@ -12,7 +12,7 @@ In extension settings, expand **1 — Prepare your connection key**. Enter the t
 
 ## 2. Pair a personal ChatGPT tab
 
-Open ChatGPT and sign in using a personal account/profile. Wait for the page to load. In **2 — Connect your ChatGPT tab**, allow the requested access and select the intended tab if more than one is available. Press **Connect selected tab**. Its title and result appear in the same step. Keep it open; the chat currently displayed in it is protected from review and writes.
+Open ChatGPT and sign in using a personal account/profile. Wait for the page to load. In **2 — Connect your ChatGPT tab**, allow the requested access and select the intended tab (the selector is always visible). Press **Connect selected tab**. Its title and result appear in the same step. Check the connected title, then press **Use this tab and continue to step 3**. Automatic reconnect also pauses here for this check; it does not skip to step 3. Keep it open; the chat currently displayed in it is protected from review and writes.
 
 ![Numbered extension setup, captured in 0.12.x](images/settings-guided-connected-en.png)
 
@@ -27,7 +27,7 @@ Use the [official custom MCP setup](https://developers.openai.com/api/docs/guide
 3. Under **Connection**, choose **Tunnel** and select/paste the same tunnel ID. This is not a public `/mcp` URL. If absent, check workspace association and Tunnels Read + Use.
 4. For this private personal server, choose **No authentication** for app-level authentication. The extension has no OAuth server. The runtime key authenticates the extension to OpenAI; never paste it into the ChatGPT conversation or the app’s OAuth fields. Keep app/tunnel access private to you.
 5. Review the risk warning and create the connection. Anyone with access to this workspace app/tunnel may be able to call its tools against your paired history. Do not publish or share the connection.
-6. Open its management page and use **Refresh tools** after a catalog update. Version 0.13.2 also accepts null for new-project destinations and returns field-specific validation errors. After loading it, refresh tools, verify prepare_project_plan is listed and enabled, then start a NEW conversation and select Chat Commander again. Extension reload alone is insufficient. Do not recreate the app on every browser restart.
+6. Open its management page and use **Refresh tools** after a catalog update. Version 0.13.3 includes grouped project cards and a tab-check step after unlocking; it also accepts null for new-project destinations and returns field-specific validation errors. After loading it, refresh tools, verify prepare_project_plan is listed and enabled, then start a NEW conversation and select Chat Commander again. Extension reload alone is insufficient. Do not recreate the app on every browser restart.
 7. In a new command conversation, enable/select **Chat Commander** and send:
 
    > Use Chat Commander to list my 3 most recent chats. Do not modify anything.
@@ -38,7 +38,7 @@ The fields above are a textual walkthrough, not invented screenshots of ChatGPT.
 
 ## Restart and recovery
 
-After restart unlock the encrypted key, open the authenticated personal tab and wait for same-account reconnect. If it fails, repeat step 2. Saved passwords are not ChatGPT passwords. Missing permissions and different identities never silently establish new trust.
+After restart unlock the encrypted key at step 1. Step 2 opens automatically: check the connected tab shown there, or select and connect an authenticated personal ChatGPT tab if reconnect failed. Press **Use this tab and continue to step 3**. Checking the restored tab does not reconnect it or invalidate pending reviews. Changing the selection requires **Connect selected tab** before continuing. Saved passwords are not ChatGPT passwords. Missing permissions and different identities never silently establish new trust.
 
 If a card is reopened, wait for its live report. A partial batch offers **Resume remaining operations**; terminal, expired and superseded cards cannot authorize writes. After an uncertain result inspect `get_review` and native ChatGPT state; never repeat the mutation automatically. Reconnecting revokes approvals while retaining read-only reports for the same account until expiry/capacity eviction. A worker restart loses volatile reports; disconnect/forget explicitly purges them.
 

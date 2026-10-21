@@ -11,6 +11,8 @@ let transport;
 let firstRender = true;
 let activeStep;
 let pairing = false;
+let confirmedSourceTab = null;
+let lastBoundTab = null;
 $('version').textContent = t('ui_084', api.runtime.getManifest().version);
 $('tunnel').value = (await api.storage.local.get('tunnelId')).tunnelId ?? '';
 const access = () => api.permissions.request({
@@ -19,9 +21,10 @@ const access = () => api.permissions.request({
 function renderOverview() {
     if (!state)
         return;
+    state.sourceConfirmed = state.unlocked && state.bound && confirmedSourceTab === state.sourceTabId;
     $('step-key').textContent = state.unlocked ? t('ui_033') : state.vaultSaved ? t('ui_034') : t('ui_035');
-    $('step-source').textContent = state.bound ? t('ui_036') : t('ui_023');
-    $('step-tools').textContent = !state.bound || state.needsToolRefresh ? t('ui_037') : t('ui_038');
+    $('step-source').textContent = state.bound ? t('setup_tab_ready') : t('ui_023');
+    $('step-tools').textContent = !state.sourceConfirmed || state.needsToolRefresh ? t('ui_037') : t('ui_038');
     const view = connectionState(state, transport, t);
     const progress = setupProgress(state, transport);
     const targets = ['key-step', 'source-step', 'app-step'];
@@ -34,6 +37,9 @@ function renderOverview() {
     $('source-tab').disabled = !progress.canPair || pairing;
     $('source-prerequisite').hidden = progress.canPair;
     $('app-prerequisite').hidden = progress.canAcknowledge;
+    $('app-content').hidden = !progress.canAcknowledge;
+    $('continue-source').hidden = !state.unlocked || !state.bound || $('source-tab').value !== String(state.sourceTabId);
+    $('continue-source').disabled = !progress.canPair || pairing;
     $('key-feedback').textContent = progress.keyDone ? state.bound ? t('ui_033') : t('setup_008') : '';
     const observed = state.appObservation;
     $('app-capabilities').textContent = state.serverInfo ? t('setup_capabilities', [state.serverInfo.version, String(state.serverInfo.limits.review_chats)]) : '';
@@ -52,6 +58,7 @@ async function refreshState() {
     if (!response?.ok)
         return;
     state = response.data;
+    if (!state.unlocked || !state.bound) confirmedSourceTab = null;
     $('unlock').hidden = !state.vaultSaved || state.unlocked;
     $('saved-key').textContent = state.vaultSaved ? t('ui_039') : t('ui_040');
     $('tools-reminder').hidden = false;
@@ -73,11 +80,14 @@ async function refreshState() {
         option.textContent = tab.title;
         $('source-tab').append(option);
     }
-    const selection = state.tabs.some(t => String(t.id) === previous) ? previous : String(state.sourceTabId ?? '');
+    const selection = state.bound && state.sourceTabId !== lastBoundTab ? String(state.sourceTabId)
+        : state.tabs.some(t => String(t.id) === previous) ? previous : String(state.sourceTabId ?? '');
+    lastBoundTab = state.bound ? state.sourceTabId : null;
     if (state.tabs.some(t => String(t.id) === selection))
         $('source-tab').value = selection;
-    $('source-tab').hidden = state.tabs.length <= 1;
-    $('source-tab-label').hidden = state.tabs.length <= 1;
+    else if (state.tabs.length === 1) $('source-tab').value = String(state.tabs[0].id);
+    $('source-tab').hidden = false;
+    $('source-tab-label').hidden = false;
     if (firstRender) {
         $('settings').open = !state.vaultSaved && !state.unlocked;
         $('automatic').checked = state.autoReconnect;
@@ -137,6 +147,15 @@ async function pairSource() {
     await refreshState();
     await renderSourceState();
 }
+$('source-tab').addEventListener('change', () => {
+    confirmedSourceTab = null;
+    renderOverview();
+});
+$('continue-source').addEventListener('click', () => {
+    if (!state?.unlocked || !state.bound || pairing || $('source-tab').value !== String(state.sourceTabId)) return;
+    confirmedSourceTab = state.sourceTabId;
+    renderOverview();
+});
 $('connection').addEventListener('submit', async (event) => {
     event.preventDefault();
     const remember = $('remember').checked;

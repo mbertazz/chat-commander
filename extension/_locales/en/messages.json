@@ -324,7 +324,7 @@
     "message": "App marked as configured. Now try the message in ChatGPT: this acknowledgement is not a tool test."
   },
   "setup_024": {
-    "message": "After restarting: unlock your key, open an authenticated ChatGPT tab and wait to reconnect to the same account. If it does not reconnect, return to step 2."
+    "message": "After restarting, unlock your key in step 1. In step 2, check the automatically reconnected tab or connect a tab yourself. Continue to step 3 only after checking it."
   },
   "setup_025": {
     "message": "Manage connection"
@@ -367,5 +367,14 @@
   },
   "setup_capabilities": {
     "message": "Running extension: $1. Reviews: up to $2 chats. Combined project plans available. This does not prove the tools are enabled in your ChatGPT conversation."
+  },
+  "setup_continue": {
+    "message": "Use this tab and continue to step 3"
+  },
+  "setup_tab_ready": {
+    "message": "Tab connected — check it below"
+  },
+  "setup_source_review": {
+    "message": "After unlocking, check the connected tab shown above. To use another tab, select it and click Connect selected tab. Then continue to step 3."
   }
 }

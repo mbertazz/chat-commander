@@ -1,6 +1,6 @@
 import { MAX_RECENT_CHATS, MAX_REVIEW_CANDIDATES } from './server-info.mjs';
 import { workspaceDiagnostic } from './workspace-diagnostics.mjs';
-export const REVIEW_URI = 'ui://chat-commander/review-v6.html';
+export const REVIEW_URI = 'ui://chat-commander/review-v7.html';
 const uuid = {
     type: 'string', pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
 };

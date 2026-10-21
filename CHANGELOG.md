@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.3
+
+- Keep setup at step 2 after unlocking or reopening settings, even after automatic reconnect. Show the tab selector and connected title in context; explicitly continue only with the connected selection. A saved binding whose tab is unavailable no longer claims a connection.
+- Group project-plan confirmation rows by destination with one shared reason, preserving every creation/move, source, state and reading caveat. Execution order and approval checks are unchanged.
+- Browser-host validation of the new layout remains pending.
+
 ## 0.13.2 — Development
 
 - Accept explicit null or omitted project_id for new-project groups consistently in the schema and validator.

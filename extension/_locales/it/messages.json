@@ -324,7 +324,7 @@
     "message": "App segnata come configurata. Ora prova il messaggio in ChatGPT: questa conferma non è un test degli strumenti."
   },
   "setup_024": {
-    "message": "Dopo il riavvio: sblocca la chiave, apri una scheda ChatGPT autenticata e attendi la riconnessione allo stesso account. Se non parte, torna al passaggio 2."
+    "message": "Dopo il riavvio, sblocca la chiave al punto 1. Al punto 2 controlla la scheda ricollegata automaticamente oppure collegane una. Continua al punto 3 dopo averla controllata."
   },
   "setup_025": {
     "message": "Gestisci il collegamento"
@@ -367,5 +367,14 @@
   },
   "setup_capabilities": {
     "message": "Estensione attiva: $1. Revisioni fino a $2 chat. Piani progetto combinati disponibili. Questo non dimostra che gli strumenti siano abilitati nella conversazione ChatGPT."
+  },
+  "setup_continue": {
+    "message": "Usa questa scheda e continua al punto 3"
+  },
+  "setup_tab_ready": {
+    "message": "Scheda collegata — controllala qui sotto"
+  },
+  "setup_source_review": {
+    "message": "Dopo lo sblocco, controlla la scheda collegata indicata sopra. Per usarne un’altra, selezionala e premi Collega la scheda selezionata. Poi continua al punto 3."
   }
 }

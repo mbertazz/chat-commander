@@ -303,6 +303,9 @@ export function reviewWidget() {
         const revision = document.querySelector('#revision');
         if (revision)
             revision.textContent = synchronized ? t('review_053', { revision: data.revision }) : '';
+        // Group project operations for display only. Execution retains the original step order.
+        const projectGroups = new Map();
+        const grouped = data.changes.filter(c => c.action === 'move_chat').length > 1;
         for (const change of data.changes) {
             const row = document.createElement('li');
             const link = document.createElement('a');
@@ -334,8 +337,32 @@ export function reviewWidget() {
             };
             state.textContent = (data.status === 'applying' && change.status === 'pending' ? t('review_029') : names[change.status] ?? t('review_030')) +
                 (chat ? ` · ${coverage[chat.reading] ?? t('review_031')}${chat.non_text_content ? t('review_032') : ''}` : '');
-            row.append(link, detail, reason, state);
-            output.append(row);
+            const destination = change.action === 'create_project' ? change.before_title
+                : change.action === 'move_chat' ? change.destination_name : null;
+            if (grouped && destination) {
+                let group = projectGroups.get(destination);
+                if (!group) {
+                    const container = document.createElement('li');
+                    const heading = document.createElement('strong');
+                    heading.textContent = destination;
+                    const explanation = document.createElement('p');
+                    explanation.textContent = change.reason;
+                    const members = document.createElement('ul');
+                    container.append(heading, explanation, members);
+                    output.append(container);
+                    group = { members, reason: change.reason };
+                    projectGroups.set(destination, group);
+                }
+                // Keep each origin, operation state and evidence visible; repeat only distinct reasons.
+                row.append(link, detail);
+                if (change.reason !== group.reason) row.append(reason);
+                row.append(state);
+                group.members.append(row);
+            }
+            else {
+                row.append(link, detail, reason, state);
+                output.append(row);
+            }
         }
         const excluded = document.querySelector('#excluded');
         excluded.replaceChildren();
@@ -537,7 +564,7 @@ export function reviewWidget() {
     hydrate();
 }
 export const REVIEW_HTML = `<!doctype html><html lang=""><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chat Commander review confirmation</title>
-<style>body{font:14px system-ui,sans-serif;margin:0;padding:16px;color:inherit;background:transparent}h2{font-size:18px;margin:0 0 12px}ol{padding-left:24px;max-height:360px;overflow-y:auto}li{margin:12px 0}p{margin:4px 0}small{opacity:.75}button{font:inherit;padding:10px 14px;border-radius:8px;border:1px solid #aaa;margin:6px 8px 0 0;cursor:pointer}button:disabled{opacity:.5;cursor:default}#apply{background:#183e32;color:white}#apply.danger{background:#a01818}a{color:inherit}#status,#counts{margin:12px 0}</style>
+<style>body{font:14px system-ui,sans-serif;margin:0;padding:16px;color:inherit;background:transparent}h2{font-size:18px;margin:0 0 12px}#output{padding-left:24px;max-height:480px;overflow-y:auto}#output ul{padding-left:20px}#output>li{margin:18px 0}#output strong{font-size:15px}li{margin:12px 0}p{margin:4px 0}small{opacity:.75}button{font:inherit;padding:10px 14px;border-radius:8px;border:1px solid #aaa;margin:6px 8px 0 0;cursor:pointer}button:disabled{opacity:.5;cursor:default}#apply{background:#183e32;color:white}#apply.danger{background:#a01818}a{color:inherit}#status,#counts{margin:12px 0}</style>
 <h2 id="heading">Confirm changes</h2><p id="instructions">Review the changes before confirming. To change or cancel the proposal, tell ChatGPT before confirming.</p>
 <p id="revision"></p><p id="status" role="status" aria-live="polite">Loading proposal…</p><p id="excluded-label">Chats excluded from this proposal:</p><ul id="excluded"></ul><ol id="output"></ol><p id="counts" aria-live="polite"></p>
 <details><summary id="groups-label">Suggested groups (no chats moved)</summary><ul id="groups"></ul></details>

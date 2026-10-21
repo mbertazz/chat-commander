@@ -111,7 +111,7 @@ async function setupState() {
     }
     catch { }
     return {
-        vaultSaved: validVault(vault), unlocked: validConfig(config), bound: Boolean(liveSource), sourceTabId: Number.isInteger(liveSource?.tabId) ? liveSource.tabId : null,
+        vaultSaved: validVault(vault), unlocked: validConfig(config), bound: validConfig(config) && tabs.some(tab => tab.id === liveSource?.tabId), sourceTabId: Number.isInteger(liveSource?.tabId) ? liveSource.tabId : null,
         autoReconnect: autoReconnect !== false, needsToolRefresh: appObservation.catalog !== CATALOG_VERSION || !appObservation.toolAt, appObservation, serverInfo: serverInfo(), tabs
     };
 }
