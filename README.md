@@ -1,6 +1,12 @@
 # Chat Commander
 
-ChatGPT history as MCP tools. Firefox runtime. Explicit confirmation for writes.
+Your chat history is full of side quests. Let the LLM build the quest log.
+
+Ask ChatGPT to find related chats, read them, and figure out what belongs together. Your hiking itinerary and gear debates become one trip plan, with a proposed project to hold them.
+
+Chat Commander supplies the MCP tools. The handler runs in Firefox, receives requests through your private OpenAI tunnel, and uses a selected, signed-in ChatGPT tab to read chats and execute confirmed operations. You inspect the exact card and click before any writes.
+
+**LLM: reasoning. Firefox: plumbing. You: commit permission.**
 
 **Experimental · 0.13.6 · Firefox desktop 140+ · MIT**
 
@@ -20,7 +26,7 @@ No daemon, developer-hosted backend or runtime npm dependencies. Uses undocument
 
 Every write requires the exact in-chat confirmation card. The source conversation is excluded. Stale approvals, conflicts and uncertain outcomes stop execution. No automatic mutation retries, transaction or rollback.
 
-The LLM reads and groups conversations by their contents; the extension handles discovery, state checks and confirmed operations. [Demo prompt](docs/demo-prompt.md).
+[Try the demo prompt](docs/demo-prompt.md).
 
 ## Run
 
