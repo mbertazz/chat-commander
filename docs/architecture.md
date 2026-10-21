@@ -42,3 +42,7 @@ Tunnel work is deliberately serial and polls one command at a time. No new concu
 Runtime uses no npm dependencies. Tests run on Node 22.22 and 24 in CI. Firefox desktop 140+ is targeted; Android compatibility is not declared. [Validation status](status.md) distinguishes mocks, past browser checks and pending 0.13 validation.
 
 Retained report access revalidates the live session identity; if the session cannot be verified, reconnect the same account before reading the report.
+
+## Argument rejection
+
+The public project-plan schema and validator both accept an omitted or null project_id for an explicitly new destination. All existing-project ID/ownership/sharing checks remain. Schema failures return JSON-RPC -32602 with bounded validation_errors (path, code, expected rule), also summarized in the message for hosts that hide error data. Argument values, unknown field names, private text and capabilities are never echoed. Rejection occurs before any browser or tool operation. Cross-group duplicate membership is rejected at validation. This diagnostic cannot recover payloads of past calls, nor identify host-side validation failures that never reached the server.

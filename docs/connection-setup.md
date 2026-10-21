@@ -27,7 +27,7 @@ Use the [official custom MCP setup](https://developers.openai.com/api/docs/guide
 3. Under **Connection**, choose **Tunnel** and select/paste the same tunnel ID. This is not a public `/mcp` URL. If absent, check workspace association and Tunnels Read + Use.
 4. For this private personal server, choose **No authentication** for app-level authentication. The extension has no OAuth server. The runtime key authenticates the extension to OpenAI; never paste it into the ChatGPT conversation or the app’s OAuth fields. Keep app/tunnel access private to you.
 5. Review the risk warning and create the connection. Anyone with access to this workspace app/tunnel may be able to call its tools against your paired history. Do not publish or share the connection.
-6. Open its management page and use **Refresh tools** after a catalog update. Version 0.13.1 updates catalog metadata and the default review size. After loading it, refresh tools, verify prepare_project_plan is listed and enabled, then start a NEW conversation and select Chat Commander again. Extension reload alone is insufficient. Do not recreate the app on every browser restart.
+6. Open its management page and use **Refresh tools** after a catalog update. Version 0.13.2 also accepts null for new-project destinations and returns field-specific validation errors. After loading it, refresh tools, verify prepare_project_plan is listed and enabled, then start a NEW conversation and select Chat Commander again. Extension reload alone is insufficient. Do not recreate the app on every browser restart.
 7. In a new command conversation, enable/select **Chat Commander** and send:
 
    > Use Chat Commander to list my 3 most recent chats. Do not modify anything.

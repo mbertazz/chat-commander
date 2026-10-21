@@ -1,10 +1,10 @@
 import { CATALOG_REFRESH_GUIDANCE } from './server-info.mjs';
-import { TOOLS, validToolArgs } from './tools.mjs';
+import { TOOLS, validToolArgs, toolArgumentIssues } from './tools.mjs';
 import { RESOURCES, readResource } from './resources.mjs';
 import { VERSION } from './build-info.mjs';
 export const SERVER = {
     name: 'chat-commander', version: VERSION,
-    tools: TOOLS, validToolArgs, resources: RESOURCES, readResource,
+    tools: TOOLS, validToolArgs, toolArgumentIssues, resources: RESOURCES, readResource,
     instructions: [
         CATALOG_REFRESH_GUIDANCE,
         [

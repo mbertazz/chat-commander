@@ -1,3 +1,4 @@
+import { schemaIssues } from './argument-validation.mjs';
 import { MAX_RECENT_CHATS } from './server-info.mjs';
 import { PROJECT_TOOLS, validProjectArgs } from './projects.mjs';
 import { ACTION_TOOLS, validActionArgs } from './actions.mjs';
@@ -69,3 +70,44 @@ const validators = new Map([
     ...REVIEW_TOOLS.map(tool => [tool.name, args => validReviewArgs(tool.name, args)]),
 ]);
 export function validToolArgs(name, args) { return validators.get(name)?.(args) === true; }
+export function toolArgumentIssues(name, args) {
+    const tool = TOOLS.find(item => item.name === name);
+    if (!tool)
+        return [];
+    const issues = schemaIssues(tool.inputSchema, args);
+    if (issues.length)
+        return issues;
+    if (name === 'prepare_project_plan' && Array.isArray(args.groups)) {
+        let total = 0;
+        const members = new Set();
+        args.groups.forEach((group, index) => {
+            for (const key of ['label', 'reason']) {
+                if (!group[key].trim())
+                    issues.push({
+                        path: `arguments.groups[${index}].${key}`, code: 'blank', expected: 'non-whitespace text'
+                    });
+            }
+            total += group.ids.length;
+            if (new Set(group.ids).size !== group.ids.length)
+                issues.push({
+                    path: `arguments.groups[${index}].ids`, code: 'duplicate', expected: 'unique chat IDs'
+                });
+            for (const id of group.ids) {
+                if (members.has(id.toLowerCase()))
+                    issues.push({
+                        path: `arguments.groups[${index}].ids`, code: 'duplicate_membership', expected: 'each chat in one group only'
+                    });
+                members.add(id.toLowerCase());
+            }
+        });
+        if (total > 50)
+            issues.push({
+                path: 'arguments.groups', code: 'total_members', expected: 'at most 50 chats across all groups'
+            });
+    }
+    if (!issues.length && !validToolArgs(name, args))
+        issues.push({
+            path: 'arguments', code: 'invalid_combination', expected: 'valid bounded fields and supported combination'
+        });
+    return issues.slice(0, 8);
+}

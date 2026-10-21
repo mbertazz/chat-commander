@@ -19,7 +19,7 @@ Propose up to five projects based on explicit shared goals, decisions and depend
 
 Inspect existing projects and reuse exact suitable IDs when their purpose is supported by the available evidence. Do not infer project contents or instructions from names alone. Do not silently create duplicates.
 
-Prepare ONE confirmation card with prepare_project_plan, containing the exact project creations and chat moves. Do not rename, archive, delete or apply anything. I will inspect the complete plan before confirming it.
+Prepare ONE confirmation card with prepare_project_plan, containing the exact project creations and chat moves. Each group must have label (up to 100 characters), ids (exact reviewed chat IDs), reason (up to 500 characters), and optionally project_id. For a NEW project omit project_id or set it to null; use an exact project ID only for an existing destination. Do not add fields named projects, moves, changes or confirmed. Do not rename, archive, delete or apply anything. I will inspect the complete plan before confirming it.
 ```
 
 A valid result must include one exact card, not merely a grouping table or multiple substitute cards. No mutation occurs until the human clicks that card. The 50-chat selection test is automated with synthetic data; authenticated throughput and the final grouping quality still need a live run.

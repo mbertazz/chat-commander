@@ -33,3 +33,7 @@ Retained report access revalidates the live session identity; if the session can
 ## Follow-up: 50-chat catalog regression — 0.13.1
 
 The owner’s broad-review output used only 20 results and could not call prepare_project_plan. Current local MCP metadata already exposes that tool and a 50-chat maximum, so stale/disabled client metadata is the leading explanation, not a verified host diagnosis. The update adds runtime/catalog facts to all tool responses, preflight/refresh instructions and a 50-chat default. One extra private candidate fills the source-chat exclusion; requested/selected/scanned counts remain explicit. Six tests added: 147 total pass locally. Do not describe Refresh tools or new-conversation behavior as fixed until the host is checked.
+
+## Follow-up: project-plan arguments — 0.13.2
+
+A live three-project/twelve-move proposal failed with generic -32602 after successful selection of 50 chats. The exact request is not available yet. One reproduced mismatch is that null was rejected for a new-project destination while omission was accepted. Both forms are now explicitly supported, without weakening existing-destination or confirmation checks. Invalid inputs report bounded field/rule diagnostics without argument values. A synthetic three-project/twelve-move preparation succeeds with zero writes; 152 automated tests pass. Do not claim the original live failure’s root cause confirmed until its submitted structure is checked.

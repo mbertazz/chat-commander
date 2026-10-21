@@ -81,7 +81,11 @@ export const REVIEW_TOOLS = [
     {
         name: 'prepare_project_plan', description: [
             "Prepare ONE confirmation card to create up to 5 private empty projects and move up to 50 reviewed chats into them or existing owned private projects. ",
-            "Supply review_id from begin_review and groups with label, ids, reason, and optionally an existing project_id from list_projects. Every chat must have ",
+            [
+                "Supply review_id from begin_review and groups with label, ids, a short reason (at most 500 characters), and project_id. For a NEW project omit ",
+                "project_id or set it to null; for an existing project use its exact ID from list_projects. Do not supply projects, moves, changes or consent fields. ",
+                "Every chat must have "
+            ].join(""),
             "been read at least partially in this review; disclose partial evidence. No writes before the exact card is confirmed. Moves change applicable project ",
             "context. No deletion, sharing changes, silent name reuse, or automatic rollback. On failure stop; never retry uncertain creation or moves."
         ].join(""),
@@ -95,7 +99,9 @@ export const REVIEW_TOOLS = [
                     }, reason: {
                         type: 'string', minLength: 1, maxLength: 500
                     }, project_id: {
-                        type: 'string', pattern: '^g-p-[a-f0-9]{32}$'
+                        anyOf: [{
+                                type: 'string', pattern: '^g-p-[a-f0-9]{32}$'
+                            }, { type: 'null' }], description: 'Existing exact project ID, or null/omitted to create a NEW project with label as its name.'
                     }
                 }, ['label', 'ids', 'reason'])
             }
@@ -164,9 +170,10 @@ export function validReviewArgs(name, args) {
     if (name === 'prepare_project_plan')
         return exact(args, ['review_id', 'groups'], ['review_id', 'groups']) &&
             Array.isArray(args.groups) && args.groups.length > 0 && args.groups.length <= 5 && args.groups.every(g => exact(g, ['label', 'ids', 'reason', 'project_id'], ['label', 'ids', 'reason']) && text(g.label, 100) && text(g.reason, 500) &&
-            (g.project_id === undefined || typeof g.project_id === 'string' && /^g-p-[a-f0-9]{32}$/.test(g.project_id)) &&
+            (g.project_id == null || typeof g.project_id === 'string' && /^g-p-[a-f0-9]{32}$/.test(g.project_id)) &&
             Array.isArray(g.ids) && g.ids.length > 0 && g.ids.length <= 50 && g.ids.every(validId) && new Set(g.ids).size === g.ids.length) &&
-            args.groups.reduce((n, g) => n + g.ids.length, 0) <= 50;
+            args.groups.reduce((n, g) => n + g.ids.length, 0) <= 50 &&
+            new Set(args.groups.flatMap(g => g.ids.map(id => id.toLowerCase()))).size === args.groups.reduce((n, g) => n + g.ids.length, 0);
     if (name !== 'prepare_review' || !exact(args, ['review_id', 'changes', 'groups'], ['review_id', 'changes']) || !Array.isArray(args.changes) || args.changes.length > 50)
         return false;
     if (!args.changes.every(c => exact(c, ['id', 'title', 'archive', 'reason'], ['id', 'reason']) && validId(c.id) && text(c.reason, 500) &&

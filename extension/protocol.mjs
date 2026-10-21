@@ -4,9 +4,9 @@ export function rpc(request, server = {}) {
     const validId = object(request) && (typeof request.id === 'string' ||
         (typeof request.id === 'number' && Number.isFinite(request.id)));
     const id = validId ? request.id : null;
-    const error = (code, message) => ({
+    const error = (code, message, data) => ({
         jsonrpc: '2.0', id, error: {
-            code, message
+            code, message, ...(data ? { data } : {})
         }
     });
     const result = value => ({
@@ -54,8 +54,14 @@ export function rpc(request, server = {}) {
         return error(-32601, 'Method not found');
     if (!server.tools?.some(tool => tool.name === params.name))
         return error(-32602, 'Unknown tool');
-    if (!server.validToolArgs(params.name, params.arguments))
-        return error(-32602, 'Invalid tool arguments');
+    if (!server.validToolArgs(params.name, params.arguments)) {
+        const issues = server.toolArgumentIssues?.(params.name, params.arguments) ?? [];
+        const detail = issues.slice(0, 3).map(issue => `${issue.path}: ${issue.code} (${issue.expected})`).join('; ');
+        return error(-32602, detail ? `Invalid tool arguments: ${detail}` : 'Invalid tool arguments', issues.length ? {
+            tool: params.name, validation_errors: issues, execution_started: false,
+            message: 'Rejected before tool execution. Correct only the specified argument shape; no operation was started.'
+        } : undefined);
+    }
     // Tool execution belongs to the dispatcher; the protocol only validates the frame.
     return result({});
 }

@@ -143,7 +143,7 @@ test('batch plan rejects duplicate memberships, unread chats and invalid existin
   const f = fixture(); const review_id = await readAll(f);
   await assert.rejects(f.call('prepare_project_plan', {review_id, groups: [
     {label: 'A', ids: [ids[0]], reason: 'A'}, {label: 'B', ids: [ids[0]], reason: 'B'},
-  ]}), /review_unread_chat/);
+  ]}), /review_invalid/);
   assert.equal(f.writes.length, 0);
   assert.equal(validReviewArgs('prepare_project_plan', {review_id, groups: [{label: 'A', ids, reason: 'A', project_id: 'invented'}]}), false);
 });

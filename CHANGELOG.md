@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.2 — Development
+
+- Accept explicit null or omitted project_id for new-project groups consistently in the schema and validator.
+- Return bounded field-specific argument errors before execution, without echoing private values.
+- Reject duplicate chat membership across project groups during validation.
+- Add a three-project/twelve-move preview regression with zero writes.
+
 ## 0.13.1 — Development
 
 - Default reviews to 50 eligible chats, privately overfetch one replacement for the protected source conversation and report exact selection counts.
