@@ -1,13 +1,13 @@
 # Validation — 0.13.6
 
-Updated 21 October 2026. Release candidate; no new Mozilla submission or signing recorded.
+Updated 21 October 2026. Owner-reported Mozilla submission on 21 October 2026; approval, signing and public availability remain unconfirmed.
 
 ## Automated
 
 - 161 tests pass locally on Node 24.22.0. Coverage includes serialized page adapters with synthetic HTTP responses, MCP/tunnel dispatch, private exact-step approvals, stale cards, report recovery, encrypted-key lifecycle, bounded read diagnostics and project-plan dependencies.
 - Current and compatibility resource URIs (`review-v8`, `review-v7`) return the current guarded component. Unknown URIs remain rejected. Resource observation failures cannot block HTML responses.
 - Python standard-library packaging produces deterministic install/source ZIPs and SHA-256 files. A clean extraction of the source ZIP reproduces the install ZIP byte for byte. No runtime npm dependencies.
-- CI targets Node 22.22 and 24. The owner reported both jobs green for 0.13.0; the release commit still needs hosted CI verification. Node 22 is unavailable locally. Local `web-ext lint` has not been run.
+- CI targets Node 22.22 and 24. The owner reported both jobs green for release commit45d49f7 (0.13.6); this is owner-provided CI evidence, not an API inspection. Node 22 is unavailable locally. Local `web-ext lint` has not been run.
 
 ## Owner-reported Firefox evidence
 
@@ -46,6 +46,6 @@ Earlier 0.12 owner checks covered recent listing/search/read, rename/archive/res
 
 ## Publication
 
-The owner reported submitting 0.12.2 to Mozilla's public channel; its live approval/listing status has not been rechecked. Version 0.13.6 is prepared locally for the next submission. GitHub release creation/assets and current hosted CI require remote verification.
+The owner reported submitting 0.12.2 to Mozilla's public channel; its live approval/listing status has not been rechecked. The owner reported submitting 0.13.6 on 21 October 2026 after AMO validation showed 0 errors and 1 warning; the visible warning was the submission checklist. Main and tag v0.13.6 were independently verified on GitHub at commit45d49f7. Both CI jobs were owner-reported green. GitHub hosted Release/assets are not created; Mozilla approval/signing/public availability remain unverified.
 
 [Setup](connection-setup.md) · [Architecture](architecture.md) · [Manual checks](review-setup.md) · [Review response](review-resolution.md)

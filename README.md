@@ -38,7 +38,7 @@ Load `dist/firefox/manifest.json` temporarily in `about:debugging#/runtime/this-
 
 Keep Firefox and the connected tab open. After an update, refresh ChatGPT tools too. [Setup and recovery](docs/connection-setup.md).
 
-Version 0.13.6 is an unsigned release candidate, not yet submitted to Mozilla. Stable Firefox installation requires a Mozilla-signed XPI. Temporary loads disappear on browser exit.
+Version 0.13.6 was submitted to Mozilla on 21 October 2026; approval, signing and public availability have not been confirmed. Local packages are unsigned. Stable Firefox installation requires a Mozilla-signed XPI. Temporary loads disappear on browser exit.
 
 ## Build
 
