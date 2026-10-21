@@ -8,8 +8,8 @@ import { validConfig } from './config.mjs';
 import { diagnose } from './diagnostics.mjs';
 import { liveDispatcher } from './live-source.mjs';
 import { CATALOG_VERSION } from './build-info.mjs';
-const dispatch = liveDispatcher(api, async (method, name) => {
-    if (!['initialize', 'tools/list', 'tools/call'].includes(method))
+const dispatch = liveDispatcher(api, async (method, name, resource) => {
+    if (!['initialize', 'tools/list', 'tools/call', 'resources/read'].includes(method))
         return;
     const { appObservation = {} } = await api.storage.session.get('appObservation');
     const at = new Date().toISOString();
@@ -23,6 +23,7 @@ const dispatch = liveDispatcher(api, async (method, name) => {
         Object.assign(appObservation, {
             tool: name, toolAt: at
         });
+    if (method === 'resources/read') appObservation.resource = { ...resource, at };
     await api.storage.session.set({ appObservation });
 });
 let active;

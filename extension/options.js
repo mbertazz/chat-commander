@@ -45,6 +45,7 @@ function renderOverview() {
     $('app-capabilities').textContent = state.serverInfo ? t('setup_capabilities', [state.serverInfo.version, String(state.serverInfo.limits.review_chats)]) : '';
     $('app-feedback').textContent = observed?.toolAt ? t('setup_tool_observed', [observed.tool, observed.toolAt])
         : observed?.catalogAt ? t('setup_catalog_observed', observed.catalogAt) : t('setup_waiting');
+    $('app-resource').textContent = observed?.resource ? t('setup_resource_observed', [observed.resource.resource, observed.resource.served ? t('setup_resource_served') : t('setup_resource_failed'), observed.resource.version, observed.resource.at]) : t('setup_resource_waiting');
     $('app-status').textContent = progress.canAcknowledge && transport?.code !== 'polling' ? view.message : '';
     const next = progress.active === 1 ? t('setup_002') : progress.active === 2 ? t('setup_009') : t('setup_018');
     $('ready').textContent = t('setup_031', next);

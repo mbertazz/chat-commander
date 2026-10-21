@@ -376,5 +376,17 @@
   },
   "setup_source_review": {
     "message": "After unlocking, check the connected tab shown above. To use another tab, select it and click Connect selected tab. Then continue to step 3."
+  },
+  "setup_resource_observed": {
+    "message": "Last component request: $1 · $2 · extension $3 · $4. Delivery does not prove ChatGPT opened the component."
+  },
+  "setup_resource_served": {
+    "message": "HTML response prepared"
+  },
+  "setup_resource_failed": {
+    "message": "resource rejected"
+  },
+  "setup_resource_waiting": {
+    "message": "No component request observed in this extension session yet."
   }
 }

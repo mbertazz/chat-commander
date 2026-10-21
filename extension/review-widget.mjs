@@ -1,5 +1,6 @@
+import { VERSION } from './build-info.mjs';
 // Runs only inside ChatGPT's sandboxed component, never in the source chat page.
-export function reviewWidget() {
+export function reviewWidget(componentVersion = 'development') {
     const output = document.querySelector('#output');
     const status = document.querySelector('#status');
     const apply = document.querySelector('#apply');
@@ -570,7 +571,7 @@ export function reviewWidget() {
     window.addEventListener('openai:set_globals', hydrate);
     void request('ui/initialize', {
         appInfo: {
-            name: 'Chat Commander review', version: '0.13.0'
+            name: 'Chat Commander review', version: componentVersion
         }, appCapabilities: {}, protocolVersion: '2026-01-26'
     })
         .then(() => {
@@ -596,4 +597,5 @@ export const REVIEW_HTML = `<!doctype html><html lang=""><meta charset="utf-8"><
 <p id="revision"></p><p id="expiry" role="timer" aria-live="off"></p><p id="status" role="status" aria-live="polite">Loading proposal…</p><p id="excluded-label">Chats excluded from this proposal:</p><ul id="excluded"></ul><ol id="output"></ol><p id="counts" aria-live="polite"></p>
 <details><summary id="groups-label">Suggested groups (no chats moved)</summary><ul id="groups"></ul></details>
 <button id="apply" disabled>Confirm and apply these changes</button><button id="cancel" disabled>Cancel remaining operations</button>
-<script>(${reviewWidget.toString()})();</script></html>`;
+<p id="component-version"><small>Chat Commander component ${VERSION}</small></p>
+<script>(${reviewWidget.toString()})(${JSON.stringify(VERSION)});</script></html>`;

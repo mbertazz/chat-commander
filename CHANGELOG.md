@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.6
+
+- Keep the previous registered review-v7 URI available alongside review-v8, serving the current guarded component with the exact requested URI. This fixes local resource lookup for retained host descriptors; it does not establish host ingestion success.
+- Display the component build version and use it for bridge initialization. Preserve expiry and current-revision approval guards for either URI.
+- Show bounded last resource-request diagnostics in setup step 3 (known URI or unknown, response outcome, version, timestamp), without arbitrary URLs, credentials or chat data. Diagnostic recording failures do not block resource responses.
+
 ## 0.13.5
 
 - Show expiry date/time and remaining minutes in confirmation cards; disable local confirmation after expiry.

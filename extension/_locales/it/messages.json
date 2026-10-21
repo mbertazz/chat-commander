@@ -376,5 +376,17 @@
   },
   "setup_source_review": {
     "message": "Dopo lo sblocco, controlla la scheda collegata indicata sopra. Per usarne un’altra, selezionala e premi Collega la scheda selezionata. Poi continua al punto 3."
+  },
+  "setup_resource_observed": {
+    "message": "Ultima richiesta del componente: $1 · $2 · estensione $3 · $4. La consegna non prova che ChatGPT abbia aperto il componente."
+  },
+  "setup_resource_served": {
+    "message": "Risposta HTML preparata"
+  },
+  "setup_resource_failed": {
+    "message": "risorsa rifiutata"
+  },
+  "setup_resource_waiting": {
+    "message": "Nessuna richiesta del componente osservata in questa sessione dell’estensione."
   }
 }

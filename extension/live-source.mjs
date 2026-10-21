@@ -1,3 +1,4 @@
+import { resourceObservation } from './resources.mjs';
 import { serverInfo, MAX_REVIEW_CANDIDATES } from './server-info.mjs';
 import { readDiagnostic } from './read-diagnostics.mjs';
 import { PROJECT_TOOLS, validProjectArgs, normalizeWorkspaceResult } from './projects.mjs';
@@ -472,6 +473,10 @@ export function liveDispatcher(api, observed = async () => { }) {
     const dispatch = async (command, deadline = Infinity, signal) => {
         const body = await executeDispatch(command, deadline, signal);
         const method = command?.jsonrpc?.method;
+        if (method === 'resources/read') {
+            try { await observed(method, undefined, resourceObservation(command.jsonrpc.params?.uri, body?.resp_json)); }
+            catch { } // Diagnostics must not affect resource delivery.
+        }
         const toolResult = method === 'tools/call' ? body?.resp_json?.result : null;
         if (toolResult) {
             let data = toolResult.structuredContent;
@@ -491,7 +496,7 @@ export function liveDispatcher(api, observed = async () => { }) {
                     }];
             }
         }
-        if (body?.resp_json?.result && !body.resp_json.result.isError) {
+        if (method !== 'resources/read' && body?.resp_json?.result && !body.resp_json.result.isError) {
             // Observation failures must not turn a completed write into a delivery failure.
             try {
                 await observed(method, command.jsonrpc.params?.name);
