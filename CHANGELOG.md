@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.4
+
+- Mark failed review reads as MCP tool errors and instruct callers to stop, including inside batches; retain safe error codes and diagnostics in read-only reports.
+- Preserve conversation-read HTTP/timeout/network diagnostics across the page and extension boundary, without raw errors, URLs, credentials or contents.
+- Fix a local `messages` variable shadowing the error-message catalog: failed reads could throw a ReferenceError and hide the original failure.
+
 ## 0.13.3
 
 - Keep setup at step 2 after unlocking or reopening settings, even after automatic reconnect. Show the tab selector and connected title in context; explicitly continue only with the connected selection. A saved binding whose tab is unavailable no longer claims a connection.

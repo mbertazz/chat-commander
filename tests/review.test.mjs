@@ -202,3 +202,25 @@ test('selection remains bounded at 50 and reports a reduced actual count after e
   assert.equal(requested, 51); assert.equal(data.selected_count, 1); assert.equal(data.requested_count, 50);
   assert.equal(data.chats[0].title, 'Travel');
 });
+
+test('failed review reads are tool errors with retained safe diagnostics and stop instructions', async () => {
+  for (const code of ['read_rate_limited', 'read_schema_unknown', 'PRIVATE ERROR']) {
+    const f = fixture();
+    f.config.read = async () => { throw Object.assign(new Error(code), {diagnostic: {
+      phase: 'conversation', http_status: 429, failure: 'http', elapsed_ms: 25,
+      url: 'PRIVATE URL', body: 'PRIVATE CONTENT', token: 'PRIVATE TOKEN'
+    }}); };
+    const manager = createReviewManager(f.config);
+    const start = (await manager.handle('begin_review', {limit: 2}, source)).structuredContent;
+    const failed = await manager.handle('read_review_chat', {review_id: start.review_id, id: id1}, source);
+    assert.equal(failed.isError, true);
+    assert.equal(failed.structuredContent.reading, 'failed');
+    assert.equal(failed.structuredContent.error, code === 'PRIVATE ERROR' ? 'read_failed' : code);
+    assert.match(failed.structuredContent.next, /Stop this review/);
+    const report = await manager.handle('get_review', {review_id: start.review_id}, source);
+    assert.equal(report.structuredContent.chats[0].read_error, failed.structuredContent.error);
+    assert.equal(report.structuredContent.chats[0].diagnostic.http_status, 429);
+    assert.ok(!JSON.stringify([failed, report]).includes('PRIVATE'));
+    assert.equal(f.writes.length, 0);
+  }
+});

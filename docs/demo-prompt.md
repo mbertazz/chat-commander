@@ -23,3 +23,5 @@ Prepare ONE confirmation card with prepare_project_plan, containing the exact pr
 ```
 
 A valid result must include one exact card, not merely a grouping table or multiple substitute cards. No mutation occurs until the human clicks that card. The 50-chat selection test is automated with synthetic data; authenticated throughput and the final grouping quality still need a live run.
+
+Read sequentially and inspect every result before the next call. Treat `reading:"failed"` or `isError:true` as a failure even if the transport call itself returned normally. Stop and report the returned code/diagnostic; do not continue a prewritten loop or retry automatically.

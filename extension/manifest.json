@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Chat Commander",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "description": "__MSG_ui_082__",
   "minimum_chrome_version": "120",
   "permissions": [

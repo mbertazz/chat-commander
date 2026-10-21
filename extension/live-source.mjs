@@ -256,8 +256,11 @@ export async function readLiveChat(api, source, args, signal, deadline = Infinit
     const expiresAt = Date.now() + Math.max(0, Math.min(25000, deadline - performance.now()));
     const frame = await boundFrame(api, source, signal, deadline, ['read_chat', args, source?.userHash, expiresAt]);
     const result = frame.result;
-    if (result?.code !== 'read_chat_ok')
-        fail(messages[result?.code] ? result.code : 'read_chat_failed');
+    if (result?.code !== 'read_chat_ok') {
+        const error = new SourceError(messages[result?.code] ? result.code : 'read_chat_failed');
+        error.diagnostic = readDiagnostic(result?.diagnostic);
+        throw error;
+    }
     const chat = result.chat;
     if (!chat || chat.id !== args.id || typeof chat.title !== 'string' || chat.title.length > 4096 || typeof chat.archived !== 'boolean' ||
         !Array.isArray(result.messages) || result.messages.length > (args.limit ?? 10) ||
@@ -268,7 +271,7 @@ export async function readLiveChat(api, source, args, signal, deadline = Infinit
         !Number.isInteger(result.unsupported_messages) || result.unsupported_messages < 0 || result.unsupported_messages > 10000)
         fail('read_schema_unknown');
     let size = 0;
-    const messages = result.messages.map(message => {
+    const readMessages = result.messages.map(message => {
         if (!message || typeof message.id !== 'string' || !message.id || message.id.length > 256 ||
             !['user', 'assistant'].includes(message.role) || typeof message.text !== 'string' || message.text.length > 2000 ||
             !Number.isInteger(message.text_offset) || message.text_offset < 0 || message.text_offset > 4194304 ||
@@ -280,13 +283,13 @@ export async function readLiveChat(api, source, args, signal, deadline = Infinit
             has_more_text: message.has_more_text, unsupported_content: message.unsupported_content
         };
     });
-    if (size > 12000 || (result.has_more && messages.length === 0))
+    if (size > 12000 || (result.has_more && readMessages.length === 0))
         fail('read_schema_unknown');
     return {
         synthetic: false, scope: 'active_branch_text', chat: {
             id: chat.id, title: chat.title, archived: chat.archived,
             url: `https://chatgpt.com/c/${chat.id}`
-        }, messages, has_more: result.has_more, next_cursor: result.next_cursor,
+        }, messages: readMessages, has_more: result.has_more, next_cursor: result.next_cursor,
         omitted_internal_messages: result.omitted_internal_messages, unsupported_messages: result.unsupported_messages,
         warning: [
             "Chronological active-branch text only; internal messages and attachment interpretation excluded. Long messages continue with the same ID and ",
@@ -452,7 +455,7 @@ export function liveDispatcher(api, observed = async () => { }) {
                 const mutation = ACTION_TOOLS.some(tool => tool.name === command.jsonrpc.params.name && tool.name !== 'get_chat');
                 const code = (error instanceof SourceError || error instanceof ReviewError) && messages[error.message] ? error.message
                     : mutation ? 'action_outcome_unknown' : 'source_read_failed';
-                const diagnostic = ['list_chats', 'search_chats'].includes(command.jsonrpc.params.name) ? readDiagnostic(error?.diagnostic) : null;
+                const diagnostic = ['list_chats', 'search_chats', 'read_chat', 'read_review_chat'].includes(command.jsonrpc.params.name) ? readDiagnostic(error?.diagnostic) : null;
                 const data = {
                     error: code, message: messages[code], ...(diagnostic ? { diagnostic } : {})
                 };

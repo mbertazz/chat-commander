@@ -137,3 +137,18 @@ test('document changes discard read content, and extension boundary rejects over
   api2.scripting.executeScript = async options => [{frameId: 0, result: options.world === 'ISOLATED' ? id : valid}];
   await assert.rejects(readLiveChat(api2, binding, {id}), /read_schema_unknown/);
 });
+
+test('conversation HTTP failures preserve bounded diagnostics through the extension boundary', async () => {
+  const fetcher = async url => url === '/api/auth/session' ? Response.json(session) : new Response(null, {status: 403});
+  const data = await read({id}, fetcher);
+  assert.equal(data.code, 'read_chat_failed');
+  assert.equal(data.diagnostic.phase, 'conversation');
+  assert.equal(data.diagnostic.http_status, 403);
+  assert.equal(data.diagnostic.failure, 'http');
+  await assert.rejects(readLiveChat(apiFor(fetcher), binding, {id}), error => {
+    assert.equal(error.message, 'read_chat_failed');
+    assert.equal(error.diagnostic.http_status, 403);
+    assert.ok(!JSON.stringify(error.diagnostic).includes('private-token'));
+    return true;
+  });
+});

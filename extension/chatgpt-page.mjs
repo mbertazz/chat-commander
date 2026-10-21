@@ -342,6 +342,8 @@ export async function chatgptPage(operation, args = {}, expectedUserHash = null,
         }
     }
     async function read() {
+        let phase = 'session';
+        const startedAt = Date.now();
         const id = args?.id;
         const limit = args?.limit ?? 10;
         if (typeof id !== 'string' || !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id) ||
@@ -369,6 +371,7 @@ export async function chatgptPage(operation, args = {}, expectedUserHash = null,
                 return { code: 'source_identity_changed' };
             if (expired())
                 return { code: 'source_cancelled' };
+            phase = 'conversation';
             const data = await json(await globalThis.fetch(`/backend-api/conversation/${id}`, {
                 ...options(), headers: { Authorization: `Bearer ${token}` }
             }));
@@ -482,7 +485,16 @@ export async function chatgptPage(operation, args = {}, expectedUserHash = null,
             };
         }
         catch (error) {
-            return { code: lastHttpStatus === 429 ? 'read_rate_limited' : error.message === 'source_workspace_unsupported' ? error.message : 'read_chat_failed' };
+            return {
+                code: lastHttpStatus === 429 ? 'read_rate_limited' : error.message === 'source_workspace_unsupported' ? error.message : 'read_chat_failed',
+                diagnostic: {
+                    phase, http_status: lastHttpStatus,
+                    failure: lastSignal?.aborted && lastSignal.reason?.name === 'TimeoutError' || error?.name === 'TimeoutError' ? 'timeout'
+                        : error?.name === 'AbortError' ? 'aborted' : error?.name === 'TypeError' ? 'network'
+                            : lastHttpStatus !== null && lastHttpStatus >= 400 ? 'http' : 'other',
+                    elapsed_ms: Math.max(0, Math.min(60000, Date.now() - startedAt))
+                }
+            };
         }
     }
     // Project operations are candidate internal API contracts, never URL parameters.

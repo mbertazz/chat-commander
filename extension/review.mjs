@@ -1,3 +1,4 @@
+import { readDiagnostic, readErrorCode } from './read-diagnostics.mjs';
 import { MAX_RECENT_CHATS, MAX_REVIEW_CANDIDATES } from './server-info.mjs';
 import { workspaceDiagnostic } from './workspace-diagnostics.mjs';
 export const REVIEW_URI = 'ui://chat-commander/review-v7.html';
@@ -32,7 +33,7 @@ export const REVIEW_TOOLS = [
         name: 'read_review_chat', description: [
             "Read a bounded page from a chat in the review snapshot. Only this tool records reading coverage for the review. Omitted attachments mean the chat is ",
             "not fully understood. Continue using returned cursor with SAME review/chat. Triage with overview:true (up to two text segments per chat), then deepen ",
-            "selected candidates. Do not claim full reading on excerpts. Stop on rate limits; do not retry automatically. Reading failure/partial content must not ",
+            "selected candidates. Do not claim full reading on excerpts. Stop on any reading:failed or isError result, even inside a batch; inspect each result before issuing the next call. Do not retry automatically. Reading failure/partial content must not ",
             "be presented as a completed review."
         ].join(""),
         inputSchema: schema({
@@ -238,7 +239,7 @@ export function createReviewManager({ list, read, action, currentBinding, active
             expires_at: new Date(r.expiresAt).toISOString(), requested_count: r.requestedCount, selected_count: r.chats.length, request_fulfilled: r.chats.length === r.requestedCount, scanned_count: r.scannedCount ?? r.chats.length, excluded_chats: r.excluded,
             chats: r.chats.map(c => ({
                 id: c.id, title: c.title, archived: c.archived, url: `https://chatgpt.com/c/${c.id}`,
-                reading: c.coverage, non_text_content: c.unsupported, read_error: c.error
+                reading: c.coverage, non_text_content: c.unsupported, read_error: c.error, ...(c.diagnostic ? { diagnostic: c.diagnostic } : {})
             })),
             changes: r.steps.map((s, index) => ({
                 number: index + 1, id: s.id, action: s.name, before_title: s.beforeTitle,
@@ -520,6 +521,7 @@ export function createReviewManager({ list, read, action, currentBinding, active
                     chat.cursor = data.next_cursor;
                     chat.unsupported = data.unsupported_messages > 0;
                     chat.error = null;
+                    chat.diagnostic = null;
                     return result({
                         review_id: r.id, ...data, reading: chat.coverage, next: data.has_more ? 'More text available; continue if needed. Do not archive on partial evidence.' : 'Read the other chats; then prepare exact changes and group suggestions.'
                     });
@@ -527,12 +529,15 @@ export function createReviewManager({ list, read, action, currentBinding, active
                 catch (error) {
                     chat.coverage = 'failed';
                     chat.cursor = null;
-                    chat.error = 'read_failed';
+                    chat.error = readErrorCode(error);
+                    chat.diagnostic = readDiagnostic(error?.diagnostic);
                     if (error instanceof ReviewError)
                         throw error;
-                    return result({
-                        review_id: r.id, id: chat.id, reading: 'failed', error: error?.message === 'read_rate_limited' ? 'read_rate_limited' : 'read_failed', next: error?.message === 'read_rate_limited' ? 'Rate limited. Stop reading; do not retry.' : 'Do not propose changes for this unread chat. Continue with the others.'
-                    });
+                    return { ...result({
+                        review_id: r.id, id: chat.id, reading: 'failed', error: chat.error,
+                        ...(chat.diagnostic ? { diagnostic: chat.diagnostic } : {}),
+                        next: 'Stop this review and report the failure. Do not read more chats, prepare changes or retry without user direction.'
+                    }), isError: true };
                 }
                 finally {
                     r.busy = false;
