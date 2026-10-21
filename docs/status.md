@@ -1,43 +1,51 @@
-# Validation status — 0.13.6 development
+# Validation — 0.13.6
+
+Updated 21 October 2026. Release candidate; no new Mozilla submission or signing recorded.
 
 ## Automated
 
-161 tests pass locally on Node 24.22.0. Tests include real serialized page-adapter execution with synthetic HTTP responses, MCP/tunnel integration, component bridge simulations, encrypted-key lifecycle, all-write previews, stale-card rehydration, exact-step replay rejection, same-account report recovery and project-plan dependencies. No runtime npm dependencies.
+- 161 tests pass locally on Node 24.22.0. Coverage includes serialized page adapters with synthetic HTTP responses, MCP/tunnel dispatch, private exact-step approvals, stale cards, report recovery, encrypted-key lifecycle, bounded read diagnostics and project-plan dependencies.
+- Current and compatibility resource URIs (`review-v8`, `review-v7`) return the current guarded component. Unknown URIs remain rejected. Resource observation failures cannot block HTML responses.
+- Python standard-library packaging produces deterministic install/source ZIPs and SHA-256 files. A clean extraction of the source ZIP reproduces the install ZIP byte for byte. No runtime npm dependencies.
+- CI targets Node 22.22 and 24. The owner reported both jobs green for 0.13.0; the release commit still needs hosted CI verification. Node 22 is unavailable locally. Local `web-ext lint` has not been run.
 
-CI is configured for Node 22.22 and 24. Node 22 is not installed in this environment; the owner verified both hosted jobs for 0.13.0, while 0.13.1 needs a new CI run. The portable runner selects the appropriate isolation flag. Packaging uses Python standard library and produces unsigned install/source archives with SHA-256 files. No new Mozilla upload has occurred.
+## Owner-reported Firefox evidence
 
-## Catalog mismatch regression
+On 0.13.6 the owner supplied a screenshot of the current component version, expiry countdown, grouped destination, three pending operations and active confirmation button. After clicking confirmation, Chat Commander reported:
 
-The owner’s live output examined 19 of 20 returned chats and could not call prepare_project_plan although server instructions named it. This is consistent with stale/disabled host metadata; the actual host callable set has not been independently inspected. The current MCP catalog includes the plan tool and 50-chat schemas. Six new tests exercise the real serialized adapter selecting 50 after exclusion, default/short selection, runtime evidence for cached callers/errors and non-fatal observation recording. Host refresh/new-conversation validation remains required.
+- Created the previously absent Dolomites demo project.
+- Moved the two fully read itinerary/gear conversations into it.
+- Review completed; 3 applied and verified, no conflicts, unknown outcomes or failures.
 
-## Browser evidence
+This validates one create-project/two-move batch through the authenticated browser and exact-card confirmation. No independent native project-view capture was provided. It does not validate a 50-chat write batch.
 
-Earlier 0.12.x owner checks covered listing/search/reading, individual actions, project creation/moves, a verified disposable deletion, vault restart/unlock, permission recovery and English settings/component screenshots. Earlier intermittent discovery/deletion failures were not root-caused.
+Other owner checks during 0.13 development:
 
-The new 0.13 flows require fresh authenticated Firefox validation: every-write confirmation, partial-plan reload/resume, same-account report recovery, batch project organization and observed setup feedback. A full 50-chat run, second-account/workspace checks and prolonged lifecycle remain unverified. Android is not declared compatible; Chromium is not supported by current browser evidence.
+- Runtime/catalog versions and callable `prepare_project_plan` verified after Refresh tools.
+- 50 eligible chats selected from 51 scanned; the command/source conversation excluded. A sequential review reported 19 complete text reads and 31 partial reads, then prepared 3 projects/12 moves without applying them. Attachments were disclosed as unsupported.
+- Grouped confirmation layout verified by screenshots. The current card shows one reason per destination and individual operation/read states.
+- Unlock/tab-check flow and observed successful tool-call feedback verified. Resource-request diagnostics report prepared responses, not proof of host delivery/rendering.
+- Previously failing conversation read successfully in a targeted test; original failure cause remains unknown.
 
-## External status
+Earlier 0.12 owner checks covered recent listing/search/read, rename/archive/restore, project moves, one independently verified disposable deletion, signed installation, vault restart/unlock and permission recovery. These are historical evidence, not all repeated against 0.13.6.
 
-The owner submitted 0.12.2 to the public Mozilla channel; approval/live listing has not been rechecked. 0.13.1 is a local development update only. The owner reported both Node 22.22 and Node 24 CI jobs green for the preceding 0.13.0 commit. GitHub CI must be checked after pushing this update. Recorded real-response fixtures, new host-form screenshots and web-ext lint are outstanding; synthetic tests are not substituted as evidence for them.
+## Resolved local defects
 
-See [review resolution](review-resolution.md), [connection setup](connection-setup.md) and [manual verification](review-setup.md). No independent security certification or physical data-erasure claim is made.
+- Reading failures returned `isError:false`, told callers to continue, and lost useful codes. They now signal MCP errors, request a stop and retain bounded safe diagnostics.
+- A local `messages` variable shadowed the error catalog and raised a ReferenceError on failed reads. Regression tests cover the error path through the page and extension boundary.
+- Old review cards hid expiry and conflated elapsed lifetime with missing volatile state. Cards now expose deadlines; newly prepared review/project proposals get a fresh 30-minute window. Known expiry, missing memory and failed checks are distinct where evidence permits.
+- Network evidence showed ChatGPT requesting `review-v7` and receiving HTTP404, HTML asset not found, while the server only served v8. Both URIs are now registered; fresh 0.13.6 component loading is owner-verified. Old host-cached HTML can still differ from the running server; component and server versions are separate evidence.
 
-## Project-plan argument rejection
+## Open checks and limits
 
-The owner reports a live 50-chat selection and completed overview pass, followed by JSON-RPC -32602 on a three-project/twelve-move proposal. No card or writes occurred. The exact submitted arguments have been requested, not received. Explicit project_id:null was reproduced as rejected in 0.13.1 and is now supported; it is a plausible cause, not a confirmed diagnosis of the owner’s request. Five regression tests cover three new projects/twelve moves preparing without writes, omitted/null IDs, bounded private-safe diagnostics and pre-execution rejection. Live confirmation of the original case remains pending.
+- Applying the full 50-chat organization plan, second-account/workspace browser checks and prolonged lifecycle remain unverified. Automatic identity-refusal tests are not substitutes for those browser tests.
+- Earlier intermittent discovery/deletion failures and the original project-plan INVALID_ARGUMENT were not root-caused. Its `project_id` fields were omitted; explicit null was not its cause. Later successful proposals are not proof of the original fix.
+- Project listings alone do not prove suitability of existing project contents. Search/project coverage is not certified exhaustive; non-text attachments are not interpreted.
+- Recorded sanitized real-response fixtures, refreshed public gallery captures, keyboard/screen-reader coverage and local web-ext lint remain outstanding.
+- Android compatibility is not declared; Chromium is unsupported by current browser evidence. No independent security audit or physical-erasure claim is made.
 
-## 0.13.3 setup and confirmation usability
+## Publication
 
-Live user evidence: 0.13.2 successfully prepared 3 new projects and 12 moves; nothing applied. Initial invalid-argument cause remains unknown (project_id was omitted, so explicit null was not its cause). A transient tunnel read failure recovered and the same review resumed. The confirmation screenshot repeated a shared reason for every move. Local 0.13.3 groups destinations while retaining every operation and state. Setup previously advanced to step 3 on automatic reconnect; it now pauses at step 2 to check the actual connected tab before continuing, with a visible selector and contextual feedback. Missing tabs cannot appear connected based on saved metadata alone. New behavior has automated coverage; authenticated browser validation remains pending.
+The owner reported submitting 0.12.2 to Mozilla's public channel; its live approval/listing status has not been rechecked. Version 0.13.6 is prepared locally for the next submission. GitHub release creation/assets and current hosted CI require remote verification.
 
-## 0.13.4 failed read diagnostics
-
-Owner reported one failed review read followed by four more reads before the host stopped, despite a stop-on-error prompt. Reproduced code defects: read_review_chat used isError:false and told callers to continue, discarded bounded causes, and readLiveChat shadowed its message catalog with a local message list, throwing a ReferenceError on the error path. These are corrected with tool-error signaling, explicit stop instructions, allowlisted cause codes and bounded conversation diagnostics retained in get_review. This does not establish why the owner's original HTTP/read request failed; that payload is unavailable. Added tests cover an HTTP403 through the real page adapter and extension boundary, plus rate-limit/schema/private-error handling and reports. 156 tests pass; authenticated verification pending. Host callers must still honor stop instructions and inspect each sequential result; no server-side batching or automatic retry is introduced. Owner confirmed 0.13.3 tool-call observation after Refresh tools; grouped card remains untested because the fresh review stopped during reading.
-
-## 0.13.5 review lifetime
-
-Owner successfully read the previously failing conversation in 0.13.4, then prepared the 50-chat project plan; grouped layout verified by screenshot. The card later disabled confirmation and get_review reported the old ambiguous review_expired message; expiry versus worker restart cannot be established retrospectively. No batch writes tested. New proposals renew their 30-minute deadline only after successful preparation; widgets show date/time and countdown, block local expired approval and distinguish known-expired, missing-memory and connectivity failures. A bounded in-memory expiry marker (40 entries, 30 minutes, account-bound, no chat content) supports classification after ordinary cleanup, but cannot survive restart. 158 tests pass including expiry after prolonged reading, cleanup versus missing manager and card error rendering; authenticated new-card verification remains pending.
-
-## 0.13.6 retained UI resource reference
-
-Owner supplied network evidence after Retry: ecosystem/widget requested template_pointer ui://chat-commander/review-v7.html and returned HTTP404 with detail HTML asset not found. The running server/catalog was 0.13.5, whose canonical resource was v8 and which locally rejected v7. The original HAR contained credentials and must not be retained or published; only this sanitized finding is recorded. Local compatibility fix registers v7 and v8 and returns the current component with the requested URI. This resolves the reproduced local lookup mismatch, but host asset ingestion/delivery remains unverified. Added visible component build version and safe session-only resource-request observation in setup step3. 161 tests pass; both resource paths parse and retain expiry/approval checks, unknown paths are refused, observation failures do not block responses. No real proposal, chat access or mutation performed during diagnosis.
+[Setup](connection-setup.md) · [Architecture](architecture.md) · [Manual checks](review-setup.md) · [Review response](review-resolution.md)

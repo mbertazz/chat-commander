@@ -37,3 +37,7 @@ The owner’s broad-review output used only 20 results and could not call prepar
 ## Follow-up: project-plan arguments — 0.13.2
 
 A live three-project/twelve-move proposal failed with generic -32602 after successful selection of 50 chats. The exact request is not available yet. One reproduced mismatch is that null was rejected for a new-project destination while omission was accepted. Both forms are now explicitly supported, without weakening existing-destination or confirmation checks. Invalid inputs report bounded field/rule diagnostics without argument values. A synthetic three-project/twelve-move preparation succeeds with zero writes; 152 automated tests pass. Do not claim the original live failure’s root cause confirmed until its submitted structure is checked.
+
+## 0.13.6 release evidence — 21 October 2026
+
+The owner verified the current component version/countdown and confirmed a new private project plus two reviewed-chat moves. The resulting report was completed with three applied/verified operations and no failures or uncertain outcomes. This closes the small authenticated batch path; it does not certify full50 execution, prolonged lifecycle or second-account isolation. Current findings and remaining checks are consolidated in [validation status](status.md).

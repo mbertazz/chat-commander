@@ -1,94 +1,70 @@
-<p align="center"><img src="chat-commander-logo.png" alt="Chat Commander" width="600"></p>
+# Chat Commander
 
-Organize your ChatGPT conversations by talking to ChatGPT.
+ChatGPT history as MCP tools. Firefox runtime. Explicit confirmation for writes.
 
-> “Find my recent chats about the Dolomites. Read them, connect the itinerary and gear decisions, and propose clearer titles and project groupings. Show your reasoning before changing anything.”
+**Experimental · 0.13.6 · Firefox desktop 140+ · MIT**
 
-ChatGPT does the reasoning across conversation contents. Chat Commander supplies tools to discover and read chats, prepare an exact proposal, and carry out confirmed operations. You do not need to collect conversation links when discovery succeeds.
-
-**Experimental · 0.13.6 (development) · Firefox desktop 140+ · MIT.** Requires your own private OpenAI Secure MCP Tunnel, a dedicated runtime key, a custom ChatGPT app connection and an authenticated personal ChatGPT tab. Installation does not provide access to these services. Not affiliated with OpenAI or Mozilla.
-
-## See the workflow
-
-The demo found three conversations among the ten most recent chats, read their active-branch text, connected hiking itinerary choices to gear and spending, and kept interview preparation separate. No manual conversation links were needed and no changes were applied.
-
-<details><summary>Discovery and content-grounded reasoning</summary>
-<img src="docs/images/demo-discovery-reasoning-en.png" alt="Related demo conversations grouped with reasons linking route, accommodation, weather and equipment choices" width="600">
-</details>
-
-<details><summary>Exact preview before confirmation</summary>
-<img src="docs/images/demo-rename-preview-en.png" alt="Two proposed demo-chat renames, both pending, with zero changes applied" width="600">
-</details>
-
-<details><summary>Connection setup, one step at a time</summary>
-<img src="docs/images/settings-guided-connected-en.png" alt="Three numbered steps for key preparation, ChatGPT tab connection and app verification" width="660">
-</details>
-
-These are actual disposable-data browser captures from 0.12.x, not mockups. The 0.13 setup replaces manual acknowledgement with observed catalog/tool-call feedback; refreshed captures are pending. A prepared proposal does not authorize execution. The host's developer-mode badge in the confirmation capture is not an extension setting; the extension does not relax page security headers or its declared CSP.
-
-## What it does
-
-- List recent non-archived chats and search titles/messages with pagination.
-- Read bounded active-branch text and continue through long conversations.
-- Rename, archive and restore individual chats using current-state checks.
-- Review 50 recent eligible chats by default, triage bounded excerpts, deepen selected candidates and prepare evidence-based title/archive suggestions and optional groups.
-- List projects; prepare empty project creation, individual moves and permanent single-chat deletion.
-- Turn reviewed groups into one confirmed plan: create up to five projects and move up to 50 chats, sequentially.
-- Require exact in-chat confirmation for every write, including individual renames and archives. Stop on conflicts or uncertain results; never automatically retry mutations.
-
-Groups remain suggestions until `prepare_project_plan` turns them into an exact creation/move preview. Project deletion, bulk deletion, project instruction/file editing and rollback are not supported. A conversation open in the connected source tab is protected from review and all changes. Permanent deletion has no extension undo.
-
-## How it works
-
-```mermaid
-flowchart LR
-    C[ChatGPT conversation] <--> O[OpenAI Secure MCP Tunnel]
-    E[Extension: MCP handler and tunnel client] -->|outbound HTTPS| O
-    E <-->|selected authenticated tab| P[ChatGPT page adapter]
-    P <-->|same-origin requests| A[Internal ChatGPT API]
+```text
+ChatGPT ↔ OpenAI Secure MCP Tunnel ↔ Firefox worker ↔ selected ChatGPT tab
 ```
 
-The extension runs its tool handler and outbound tunnel client in the browser. No separately installed daemon, developer-operated backend or conversation database. The desktop browser must remain running.
+No daemon, developer-hosted backend or runtime npm dependencies. Uses undocumented ChatGPT endpoints.
 
-The ChatGPT session token stays inside the page. Requested chat titles, links, text excerpts, project metadata and operation results travel through OpenAI so ChatGPT can respond. **Local execution does not mean no data transmission.** There is no analytics or persistent conversation cache. Optional password encryption stores the tunnel runtime key on this device; the password is not saved. See [privacy](extension/privacy.html) and [security](SECURITY.md).
+## Tools
 
-Text read from another chat is copied into the command conversation. Deleting the source chat does not delete those copies from command-chat history.
+- Discover recent chats; search titles and messages with pagination.
+- Read active-branch text in bounded pages. Attachments are not interpreted.
+- Review up to 50 recent chats; prepare rename/archive plans.
+- Prepare project creation and chat moves: up to 5 projects and 50 moves per plan.
+- Rename, archive, restore or permanently delete a single chat.
 
-The tunnel must stay private to its owner. Any member of a workspace where the app/tunnel is enabled may be able to invoke its tools against the paired history; do not share this connection. The extension does not authenticate distinct users sharing a tunnel and is not intended as a multiuser service.
+Every write requires the exact in-chat confirmation card. The source conversation is excluded. Stale approvals, conflicts and uncertain outcomes stop execution. No automatic mutation retries, transaction or rollback.
 
-## Install and connect
+The LLM reads and groups conversations by their contents; the extension handles discovery, state checks and confirmed operations. [Demo prompt](docs/demo-prompt.md).
 
-Version 0.13.6 is a local development release and has not been uploaded to Mozilla. The public Mozilla submission for 0.12.2 was sent; a live public listing has not yet been confirmed. Earlier versions were signed for self-distribution. Use a Mozilla-signed XPI for a stable Firefox installation. Local ZIP builds are unsigned and do not bypass signing requirements.
+## Run
 
-For development:
+Requires your own private OpenAI Secure MCP Tunnel, a dedicated runtime key, a custom ChatGPT app connection and a signed-in personal ChatGPT tab. Installation does not provision these. Keep the tunnel private: there is no multiuser caller authorization.
 
 ```sh
 python3 scripts/build_firefox.py
 ```
 
-Temporarily load `dist/firefox/manifest.json` in `about:debugging#/runtime/this-firefox`. Firefox removes temporary installations on full browser exit.
+Load `dist/firefox/manifest.json` temporarily in `about:debugging#/runtime/this-firefox`. Open extension settings:
 
-Open settings and follow three numbered steps: prepare/unlock the key, explicitly connect your personal ChatGPT tab, then configure/refresh the ChatGPT app and try a read-only request. Settings and the confirmation component support English and Italian, with English fallback. [Detailed setup](docs/connection-setup.md) and [50-chat demo prompt](docs/demo-prompt.md), including the ChatGPT-side connection and expected feedback.
+1. Save or unlock the tunnel key.
+2. Select/connect the personal ChatGPT tab, check its title and continue.
+3. Configure the ChatGPT app, refresh tools and run a read-only request.
 
-## Development
+Keep Firefox and the connected tab open. After an update, refresh ChatGPT tools too. [Setup and recovery](docs/connection-setup.md).
 
-Node.js 22.22+ for tests; Python 3 standard library for packaging. No npm install or runtime library dependency is required.
+Version 0.13.6 is an unsigned release candidate, not yet submitted to Mozilla. Stable Firefox installation requires a Mozilla-signed XPI. Temporary loads disappear on browser exit.
+
+## Build
+
+Node.js 22.22+ for tests. Python 3 standard library for packaging.
 
 ```sh
 npm test
 python3 scripts/package_firefox.py
 ```
 
-Packaging produces a deterministic unsigned Firefox ZIP, a reproducible source ZIP and SHA-256 files in `dist/`. Checked-in icons are release inputs. Regenerating them from the original owner-supplied PNG requires Pillow; ordinary packaging does not. CI runs the tests and build; hosted CI results must be checked after pushing.
+Produces deterministic install/source ZIPs and SHA-256 files under `dist/`. No `npm install` required. The source ZIP rebuilds the install ZIP byte for byte.
 
-## Evidence and limits
+## Trust boundaries
 
-The automated suite covers exact-step replay protection, card rehydration, all-write confirmation, report recovery and project batches. See [current evidence](docs/status.md) for results and unperformed browser checks. The author verified listing/search/read, reversible chat actions, project creation/moves, an independently verified disposable deletion, encrypted-key restart/unlock, permission revocation/recovery, guided settings and English confirmation previews in desktop Firefox. [Current evidence](docs/status.md).
+- Session tokens stay in the selected ChatGPT page. Requested text, titles, project metadata and results pass through OpenAI.
+- No analytics or persistent conversation database. The optional saved tunnel key is password-encrypted locally; the password is not stored.
+- Text read into a command conversation can remain there after source deletion.
+- Reviews are volatile. Prepared review/project cards have a 30-minute confirmation window; extension reload or worker restart can lose them earlier.
+- Moving chats changes their project context. Deletion has no extension undo; inaccessible does not mean physically erased from OpenAI systems.
 
-Earlier intermittent discovery and deletion failures remain unexplained. A successful later run does not establish a root-cause fix. Recent keyword search can miss relevant conversations; listing recent candidates and reading them is an alternative, not a guarantee of exhaustive discovery. Undocumented ChatGPT endpoints may change. Non-text attachments are not interpreted. Inaccessibility after deletion does not certify physical erasure from OpenAI systems.
+[Privacy](extension/privacy.html) · [Security](SECURITY.md) · [Architecture](docs/architecture.md)
 
-Android is not declared compatible on AMO; Chromium functionality, exhaustive search coverage and prolonged lifecycle behavior are unverified. A real second-account browser test was skipped; automatic identity-refusal tests pass. Automated tests and Mozilla signing are not an independent security audit. This private-tunnel architecture does not supply a public OpenAI plugin-directory endpoint.
+## Validation
 
-[Architecture](docs/architecture.md) · [Manual review checks](docs/review-setup.md) · [Review response](docs/review-resolution.md)
+161 local tests. Owner-reported Firefox test on 0.13.6: create one project, move two fully read demo chats, verify all three operations. A 50-chat review produced a three-project/twelve-move proposal; that larger plan was not applied.
 
-Support: sbaginov@yahoo.it. Do not include credentials, cookies, HAR files or private conversations in reports. Licensed under the [MIT License](LICENSE).
+Second-account browser checks, prolonged lifecycle, Android and Chromium remain unverified. Tests and signing are not an independent security audit. [Evidence and open checks](docs/status.md).
+
+Not affiliated with OpenAI or Mozilla. Support: sbaginov@yahoo.it. Report error codes and sanitized metadata; no credentials, HARs or private chats.
